@@ -1,0 +1,169 @@
+body, html, #root {
+  height: 100%;
+  width: 100%;
+}
+
+span {
+  color: pink;
+}
+
+.main {
+  margin-left: 18%; /* Same as the width of the sidebar */
+  height: 100%;
+}
+
+.page {
+  background-color: #fff;
+  height: 100%;
+}
+
+.page2 {
+  background-color: #ccc;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ----- Fixed sidebar ----- */
+
+.sidenav {
+  width: 18%;
+  height: 100%;
+  position: fixed;
+  z-index: 1; /* stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #111; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  overflow: hidden;
+  padding-top: 5%;
+  white-space: wrap;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 3% 7% 5% 8%;
+  text-decoration: none;
+  font-size: 3vw;
+  color: #818181;
+  display: flex;
+}
+
+/* When you mouse over the navigation links, change their color
+ * pending removal
+ * or make sth other than highlight happen on hover
+ */
+.sidenav a:hover {
+  color: #f1f1f1;
+  outline: 0;
+}
+
+.sidenav > .active {
+  color: #f1f1f1;
+  outline: 0;
+}
+
+
+/* ----- Landing page ----- */
+.landing-page {
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: center center;
+  text-align: center;
+  background-size: cover;
+  color: #111;
+  min-height: 100%;
+}
+
+.landing-page .intro-text { /* in case wanna add more text */
+  padding-top: 20%;
+  padding-bottom: 10%;
+}
+
+.landing-page .intro-text .intro-heading {
+  font-weight: bold;
+  font-size: 7vw;
+  line-height: 3vw;
+  padding-bottom: 5%;
+}
+
+.landing-page .intro-text .intro-tagline {
+  font-style: italic;
+  font-size: 4vw;
+  line-height: 4vw;
+}
+
+/*
+@media (min-width: 768px) {
+  .landing-page .intro-text {
+    padding-top: 23vh;
+    padding-bottom: 10px;
+  }
+  .landing-page .intro-text .intro-heading {
+    font-weight: 700;
+    font-size: 8vw;
+    line-height: 3vw;
+    margin-bottom: 50px;
+  }
+  .landing-page .intro-text .intro-tagline {
+    font-style: italic;
+    font-size: 4vw;
+    line-height: 4vw;
+    margin-bottom: 25px;
+  }
+} */
+
+/* ----- About page ----- */
+.about-page {
+  background-color: #555;
+  color: #fff;
+  height: 100%;
+  padding: 0px;
+  display: flex;
+  text-align: center;
+}
+
+.about-page .container {
+  height: 60%;
+  width: 60%;
+  background-color: #222;
+  margin: auto;
+  padding: 7%;
+}
+
+.about-page .container .heading {
+  font-weight: bold;
+  font-size: 4vh;
+  line-height: 2vh;
+  margin-bottom: 10%;
+  text-underline-position: under;
+}
+
+.about-page .container .content {
+  font-size: 2vh;
+  line-height: 2.5vh;
+}
+
+/* ----- How-To page ----- */
+
+.howto-page {
+  background-color: #fff;
+  padding: 2%;
+  height: 100%;
+  width: 100%;
+  margin: 10px;
+  font-size: 2vh;
+}
+
+.feature {
+  padding: 5px;
+  max-width: 80%;
+  height: auto;
+}
+@media screen and (orientation:landscape) {
+  .feature {max-width: 45%;}
+}
+
+
+/* ---- Register page -------- */
