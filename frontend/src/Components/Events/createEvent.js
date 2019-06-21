@@ -1,11 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
 
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
 import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../Constants/routes';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -24,10 +22,11 @@ const INITIAL_STATE = {
   endTime: "",
   location: "",
   details: "",
+  open: false,
   error: null,
 };
 
-class CreateEvent extends Component {
+class CreateEventFormBase extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
@@ -62,17 +61,16 @@ class CreateEvent extends Component {
     this.props.firebase.db.ref().update(updates)
       .then(result => {
         this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.EVENTS);
       })
       .catch(error => {
         this.setState({ error });
       });
 
     // uncomment if moving createEvent to seperate route
-    //event.preventDefault(); 
+    event.preventDefault(); 
   }
 
-  onChange = event => {
+  handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   }
 
@@ -84,87 +82,99 @@ class CreateEvent extends Component {
     this.setState({ endTime: date });
   }
 
+  handleOpen = () => {
+    this.setState({ open: true });
+  }
+
+  handleClose = () => {
+    this.setState({ open: false });
+  }
+
   render() {
-    const {
-      eventName,
-      startTime,
-      endTime,
-      location,
-      details,
-      error,
-    } = this.state;
-
     return (
-      <div className="main">
-        <form onSubmit={this.handleSubmit(this.props.authUser)}>
-          <label htmlFor="eventName">Event Name:</label>
-          <input
-            name="eventName"
-            id="eventName"
-            value={eventName}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Event Name"
-            required={true}
-          />
-          <br />
-          <label htmlFor="startTime">Start Time:</label>
-          <DatePicker
-            id="startTime"
-            selected={startTime}
-            onChange={this.handleStartTime}
-            required={true}
-            showTimeSelect
-            timeFormat="HH:mm"
-            timeIntervals={15}
-            dateFormat="MMMM d, yyyy h:mm aa"
-            minDate={new Date()}
-          />
-          <br />
-          <label htmlFor="endTime">End Time:</label>
-          <DatePicker
-            id="endTime"
-            selected={endTime}
-            onChange={this.handleEndTime}
-            required={true}
-            showTimeSelect
-            timeFormat="HH:mm"
-            timeIntervals={15}
-            dateFormat="MMMM d, yyyy h:mm aa"
-            minDate={startTime}
-          />
-          <br />
-          <label htmlFor="location">Location:</label>
-          <input
-            name="location"
-            id="location"
-            value={location}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Location"
-            required={true}
-          />
-          <br />
-          <label htmlFor="details">Event Details:</label>
-          <textarea
-            name="details"
-            id="details"
-            value={details}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Details"
-            required={true}
-          />
-          <br />
-          <button type="submit">
-            Create Event
-          </button>
-          <br />
+      <Fragment>
+        <Button onClick={this.handleOpen}>
+          Create New Event
+        </Button>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          fullWidth
+          maxWidth="sm">
+          <DialogTitle>New Event Details</DialogTitle>
+          <DialogContent>
+            <form>
+              <TextField
+                name="eventName"
+                type="text"
+                label="Event Title"
+                placeholder="Name of Event"
+                required={true}
+                value={this.state.eventName}
+                onChange={this.handleChange}
+                fullWidth 
+              />
+              <label htmlFor="startTime">Start Time:</label>
+              <DatePicker 
+                id="startTime"
+                selected={this.state.startTime}
+                onChange={this.handleStartTime}
+                required={true}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                minDate={new Date()}
+              />
+              <label htmlFor="endTime">End Time:</label>
+              <DatePicker
+                id="endTime"
+                selected={this.state.endTime}
+                onChange={this.handleEndTime}
+                required={true}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                minDate={this.state.startTime}
+              />
+              <TextField
+                name="location"
+                type="text"
+                label="Location"
+                placeholder="Event Location"
+                required={true}
+                value={this.state.location}
+                onChange={this.handleChange}
+                fullWidth 
+              />
+              <TextField
+                name="details"
+                type="text"
+                label="Details"
+                placeholder="Any additional details"
+                required={true}
+                value={this.state.details}
+                onChange={this.handleChange}
+                fullWidth
+                multiline rows="3" 
+              />
+            </form>
+          </DialogContent>
+          
+          { this.state.timeError && <span>{ this.state.timeError }</span>}
 
-          {error && <p>{error.message}</p>}
-        </form>
-      </div>
-    )
+          <DialogActions>
+            <Button onClick={this.handleClose}>
+              Cancel
+          </Button>
+            <Button onClick={this.handleSubmit(this.props.authUser)}>
+              Save
+          </Button>
+          </DialogActions>
+        </Dialog>
+      </Fragment>
+    );
   }
 }
 
@@ -348,7 +358,6 @@ class EditEventButtonBase extends Component {
 
 const DeleteEventButton = withFirebase(DeleteEventButtonBase);
 const EditEventButton = withFirebase(EditEventButtonBase);
+const CreateEventForm = withFirebase(CreateEventFormBase);
 
-export default withRouter(withFirebase(CreateEvent));
-
-export { DeleteEventButton, EditEventButton };
+export { DeleteEventButton, EditEventButton, CreateEventForm };

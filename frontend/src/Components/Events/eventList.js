@@ -3,7 +3,7 @@ import React from 'react';
 import { withFirebase } from '../Firebase';
 import { DeleteEventButton, EditEventButton } from './createEvent';
 
-class UserEvents extends React.Component {
+class UserEventsList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -88,8 +88,8 @@ const EventList = ({ events, loading }) => {
             <h3>{event.eventName}</h3>
             <EditEventButton eventData={event} />
             <DeleteEventButton eventData={event} />
-            <p>{event.startTime.toLocaleString()}</p>
-            <p>{event.endTime.toLocaleString()}</p>
+            <p>{event.startTime}</p>
+            <p>{event.endTime}</p>
             <p>{event.location}</p>
             <p>{event.details}</p>
           </div>
@@ -99,4 +99,4 @@ const EventList = ({ events, loading }) => {
   }
 };
 
-export default withFirebase(UserEvents);
+export default withFirebase(UserEventsList);

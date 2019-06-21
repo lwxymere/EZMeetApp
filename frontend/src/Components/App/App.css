@@ -1,169 +1,125 @@
-body, html, #root {
+body, html, #root, .mainbody {
   height: 100%;
   width: 100%;
+  padding: 0 !important;
 }
 
-span {
-  color: pink;
+/* TitleBar */
+.titleRootDiv {
+  flex-grow: 1;
+}
+.titlebarText {
+  flex-grow: 1;
+}
+.bar {
+  background-image: radial-gradient(
+    at 50% 80%,
+    rgb(40, 45, 59) 15%,
+    rgb(0, 0, 0)
+  );
+}
+.titlebarLogin a {
+  color: white;
+  text-decoration: none;
+}
+/* Purely for the Login/Logout Button. Special due to its built-in Button from Material UI */
+.titlebarButton .MuiButton-label {
+  border-top: solid rgb(170, 163, 163) ;
+  border-bottom: solid white;
 }
 
-.main {
-  margin-left: 18%; /* Same as the width of the sidebar */
-  height: 100%;
+/* Banner */
+.bannerRootDiv {
+  padding: 10%;
+  padding-bottom: 11%;
+}
+.bannerTitle {
+  text-align: center;
+  color: white;
+  font-weight: Bold;
+  font-family: Helvetica;
+}
+.bannerText {
+  text-align: center;
+  font-weight: light;
+  font-family: monospace;
+  color: white;
 }
 
-.page {
-  background-color: #fff;
-  height: 100%;
+/* About */
+.aboutRootDiv {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  background-color: purple;
+  max-width: 100% !important;
+  padding: 2%;
 }
-
-.page2 {
-  background-color: #ccc;
-  height: 100%;
-  width: 100%;
+.aboutCard {
+  max-width: 300px;
+  margin-top: 5% ;
+  margin-bottom: 5%;
+}
+.aboutMedia {
+  height: 150px;
+}
+.aboutTitle {
+  text-align: center;
+}
+.icon {
   display: flex;
   justify-content: center;
+  padding: 5%;
+}
+.iconIcon {
+  font-size: 100px !important;
+  background-color: blue;
+  border-radius: 50%;
+  padding: 4%;
 }
 
-/* ----- Fixed sidebar ----- */
-
-.sidenav {
-  width: 18%;
-  height: 100%;
-  position: fixed;
-  z-index: 1; /* stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #111; /* Black */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  overflow: hidden;
-  padding-top: 5%;
-  white-space: wrap;
-}
-
-/* The navigation menu links */
-.sidenav a {
-  padding: 3% 7% 5% 8%;
-  text-decoration: none;
-  font-size: 3vw;
-  color: #818181;
+/* How To */
+.howtoRootDiv {
   display: flex;
+  flex-direction: column;
+  background-color: rgb(130, 138, 129);
+  max-width: 100% !important;
+  padding: 2%;
 }
-
-/* When you mouse over the navigation links, change their color
- * pending removal
- * or make sth other than highlight happen on hover
- */
-.sidenav a:hover {
-  color: #f1f1f1;
-  outline: 0;
-}
-
-.sidenav > .active {
-  color: #f1f1f1;
-  outline: 0;
-}
-
-
-/* ----- Landing page ----- */
-.landing-page {
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  background-position: center center;
+.howtoTitle {
   text-align: center;
-  background-size: cover;
-  color: #111;
-  min-height: 100%;
+  text-decoration: underline;
+  border: 10%;
+}
+.howtoVideo {
+  display: flex;
+  justify-content: center;
+  padding: 3%;
 }
 
-.landing-page .intro-text { /* in case wanna add more text */
-  padding-top: 20%;
-  padding-bottom: 10%;
-}
 
-.landing-page .intro-text .intro-heading {
-  font-weight: bold;
-  font-size: 7vw;
-  line-height: 3vw;
+/* Content */
+.contentBar{
+  background-image: radial-gradient(
+    at 50% 80%,
+    rgb(255, 255, 255) 15%,
+    rgb(255, 255, 255)
+  );
+  padding-top: 3%;
   padding-bottom: 5%;
 }
-
-.landing-page .intro-text .intro-tagline {
-  font-style: italic;
-  font-size: 4vw;
-  line-height: 4vw;
-}
-
-/*
-@media (min-width: 768px) {
-  .landing-page .intro-text {
-    padding-top: 23vh;
-    padding-bottom: 10px;
-  }
-  .landing-page .intro-text .intro-heading {
-    font-weight: 700;
-    font-size: 8vw;
-    line-height: 3vw;
-    margin-bottom: 50px;
-  }
-  .landing-page .intro-text .intro-tagline {
-    font-style: italic;
-    font-size: 4vw;
-    line-height: 4vw;
-    margin-bottom: 25px;
-  }
-} */
-
-/* ----- About page ----- */
-.about-page {
-  background-color: #555;
-  color: #fff;
-  height: 100%;
-  padding: 0px;
+.contentDetails{
   display: flex;
-  text-align: center;
+  color: black;
+  padding-top: 5px;
 }
-
-.about-page .container {
-  height: 60%;
-  width: 60%;
-  background-color: #222;
-  margin: auto;
-  padding: 7%;
+.contentAvatar {
+  background-color: rgb(43, 175, 164) !important;
+  margin-top: 5px;
+  margin-right: 5px;
 }
-
-.about-page .container .heading {
-  font-weight: bold;
-  font-size: 4vh;
-  line-height: 2vh;
-  margin-bottom: 10%;
-  text-underline-position: under;
+.contentNewEvent {
+  position: absolute !important;
+  right: 5%;
+  background-color: grey !important;
 }
-
-.about-page .container .content {
-  font-size: 2vh;
-  line-height: 2.5vh;
-}
-
-/* ----- How-To page ----- */
-
-.howto-page {
-  background-color: #fff;
-  padding: 2%;
-  height: 100%;
-  width: 100%;
-  margin: 10px;
-  font-size: 2vh;
-}
-
-.feature {
-  padding: 5px;
-  max-width: 80%;
-  height: auto;
-}
-@media screen and (orientation:landscape) {
-  .feature {max-width: 45%;}
-}
-
-
-/* ---- Register page -------- */

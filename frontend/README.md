@@ -1,3 +1,22 @@
+## Nodes to install ## 
+
+Please update when you install new things.
+
+`npm install react-scroll`
+
+`npm install react-router-dom`
+
+`npm install firebase`
+
+`npm install @material-ui/core`
+
+`npm install @material-ui/icons`
+
+`npm install react-player --save`
+
+`npm install react-datepicker --save`
+ 
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
