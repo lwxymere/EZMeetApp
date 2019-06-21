@@ -30,7 +30,7 @@ const App = () => (
     <Route exact path={ROUTES.LANDING} component={LandingPage} />
     <Route exact path={ROUTES.LOGIN} component={LoginPage} />
     <Route exact path={ROUTES.HOME} component={HomePage} />
-    <Route exact path={ROUTES.EVENTS} component={EventPage} />
+    <Route path={ROUTES.EVENTS} component={EventPage} />
     <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
 
   </Router>

@@ -1,11 +1,21 @@
 import React from 'react';
 
-import { withAuthorization } from '../Session';
+import UserEvents from './eventList';
+import CreateEvent from './createEvent';
+
+import { AuthUserContext, withAuthorization } from '../Session';
 
 const EventPage = () => (
   <div className="main">
-    <h1>Manage Events Here</h1>
-    <p>Only accessible if logged in</p>
+    <AuthUserContext.Consumer>
+      {authUser => (
+        <div>
+          <UserEvents authUser={authUser} />
+          <hr />
+          <CreateEvent authUser={authUser} />
+        </div>
+      )}
+    </AuthUserContext.Consumer>
   </div>
 );
 

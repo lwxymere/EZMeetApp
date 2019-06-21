@@ -60,52 +60,35 @@ class SignInGoogleBase extends Component {
     this.state = { error: null };
   }
 
-  /*
   onSubmit = event => {
     this.props.firebase
       .doSignInWithGoogle()
       .then(socialAuthUser => {
         // create a user in firebase realtime database
-        this.props.firebase
-          .user(socialAuthUser.user.uid)
-          .set({
-            username: socialAuthUser.user.displayName,
-            email: socialAuthUser.user.email,
-            friends: {},
-            events: {},
-          })
-          .then((result) => {
-            this.setState({ error: null });
-            this.props.history.push(ROUTES.HOME);
-            console.log('result', result);
-          })
-          .catch(error => {
-            this.setState({ error });
-            console.log('error', error);
-          });
+        if (socialAuthUser.additionalUserInfo.isNewUser) {
+          return this.props.firebase
+            .user(socialAuthUser.user.uid)
+            .set({
+              username: socialAuthUser.user.displayName,
+              email: socialAuthUser.user.email,
+            })
+            .then((result) => {
+              this.setState({ error: null });
+              this.props.history.push(ROUTES.HOME);
+            })
+            .catch(error => {
+              this.setState({ error });
+            });
+        } else {
+          this.props.history.push(ROUTES.HOME);
+        }
       })
       .catch(error => {
         this.setState({ error });
-        console.log('error', error);
       });
 
     event.preventDefault();
   };
-  */
-
-  onSubmit = event => {
-    this.props.firebase
-      .doSignInWithGoogle()
-      .then(socialAuthUser => {
-        this.setState({ error: null });
-        this.props.history.push(ROUTES.HOME);
-      })
-      .catch(error => {
-        this.setState({ error });
-      });
-
-    event.preventDefault();
-  }
 
   render() {
     const { error } = this.state;
