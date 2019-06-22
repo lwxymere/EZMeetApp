@@ -12,10 +12,13 @@ Please update when you install new things.
 
 `npm install @material-ui/icons`
 
+`npm install @material-ui/pickers`
+
 `npm install react-player --save`
 
-`npm install react-datepicker --save`
- 
+________________________________________________
+
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 
-import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
 import { withFirebase } from '../Firebase';
@@ -13,6 +12,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton'
+import Grid from '@material-ui/core/Grid';
+
+import DeleteIcon from "@material-ui/icons/Delete";
+
+import DateFnsUtils from '@date-io/date-fns';
+import {  MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DateTimePicker } from "@material-ui/pickers";
 
 import EditIcon from '@material-ui/icons/Edit';
 
@@ -23,6 +29,7 @@ const INITIAL_STATE = {
   location: "",
   details: "",
   open: false,
+  timeError: null,
   error: null,
 };
 
@@ -35,8 +42,7 @@ class CreateEventFormBase extends Component {
   handleSubmit = authUser => event => {
     // ensure that endTime is after startTime
     if (this.state.startTime > this.state.endTime) {
-      this.setState({ error: { message: "Invalid End Time"} });
-      event.preventDefault();
+      this.setState({ timeError: "Invalid End Time" });
       return;
     }
     // get unique event id
@@ -67,7 +73,7 @@ class CreateEventFormBase extends Component {
       });
 
     // uncomment if moving createEvent to seperate route
-    event.preventDefault(); 
+    //event.preventDefault(); 
   }
 
   handleChange = event => {
@@ -94,7 +100,7 @@ class CreateEventFormBase extends Component {
     return (
       <Fragment>
         <Button onClick={this.handleOpen}>
-          Create New Event
+          New Event
         </Button>
         <Dialog
           open={this.state.open}
@@ -109,41 +115,41 @@ class CreateEventFormBase extends Component {
                 type="text"
                 label="Event Title"
                 placeholder="Name of Event"
-                required={true}
+                required
                 value={this.state.eventName}
                 onChange={this.handleChange}
                 fullWidth 
               />
-              <label htmlFor="startTime">Start Time:</label>
-              <DatePicker 
-                id="startTime"
-                selected={this.state.startTime}
-                onChange={this.handleStartTime}
-                required={true}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                minDate={new Date()}
-              />
-              <label htmlFor="endTime">End Time:</label>
-              <DatePicker
-                id="endTime"
-                selected={this.state.endTime}
-                onChange={this.handleEndTime}
-                required={true}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                minDate={this.state.startTime}
-              />
+    
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Grid container className="TimePicker">
+                  <DateTimePicker
+                    id="startTime"
+                    className="indiTimePicker"
+                    inputVariant="outlined"
+                    disablePast
+                    value={this.state.startTime}
+                    onChange={this.handleStartTime}
+                    label="Start Time"
+                  />
+                  <DateTimePicker
+                    id="endTime"
+                    className="indiTimePicker"
+                    inputVariant="outlined"
+                    disablePast
+                    value={this.state.endTime}
+                    onChange={this.handleEndTime}
+                    label="End Time"
+                  />
+                </Grid>
+              </MuiPickersUtilsProvider>
+              
               <TextField
                 name="location"
                 type="text"
                 label="Location"
                 placeholder="Event Location"
-                required={true}
+                required
                 value={this.state.location}
                 onChange={this.handleChange}
                 fullWidth 
@@ -153,11 +159,11 @@ class CreateEventFormBase extends Component {
                 type="text"
                 label="Details"
                 placeholder="Any additional details"
-                required={true}
+                required
                 value={this.state.details}
                 onChange={this.handleChange}
                 fullWidth
-                multiline rows="3" 
+                multiline rows="2" 
               />
             </form>
           </DialogContent>
@@ -170,7 +176,7 @@ class CreateEventFormBase extends Component {
           </Button>
             <Button onClick={this.handleSubmit(this.props.authUser)}>
               Save
-          </Button>
+          </Button> 
           </DialogActions>
         </Dialog>
       </Fragment>
@@ -179,8 +185,9 @@ class CreateEventFormBase extends Component {
 }
 
 const DeleteEventButtonBase = ({ eventData, firebase }) => (
-  <button 
-    type="button" 
+  <Button 
+    
+    className="deleteButton"
     onClick={() => {
       const msg = "Are you sure you wish to delete this event?\nThis will delete the event for all attendees";
       if (window.confirm(msg)) {
@@ -201,7 +208,7 @@ const DeleteEventButtonBase = ({ eventData, firebase }) => (
               .catch(error => console.log(error));
           })
       }
-    }}>Delete</button>
+    }}> <DeleteIcon /> </Button>
 );
 
 class EditEventButtonBase extends Component {
@@ -292,30 +299,26 @@ class EditEventButtonBase extends Component {
                 onChange={this.handleChange}
                 fullWidth 
               />
-              <label htmlFor="startTime">Start Time:</label>
-              <DatePicker 
-                id="startTime"
-                selected={this.state.startTime}
-                onChange={this.handleStartTime}
-                required={true}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                minDate={new Date()}
-              />
-              <label htmlFor="endTime">End Time:</label>
-              <DatePicker
-                id="endTime"
-                selected={this.state.endTime}
-                onChange={this.handleEndTime}
-                required={true}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                minDate={this.state.startTime}
-              />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Grid container className="TimePicker">
+                  <DateTimePicker
+                    id="startTime"
+                    inputVariant="outlined"
+                    disablePast
+                    value={this.state.startTime}
+                    onChange={this.handleStartTime}
+                    label="Start Time"
+                  />
+                  <DateTimePicker
+                    id="endTime"
+                    inputVariant="outlined"
+                    disablePast
+                    value={this.state.endTime}
+                    onChange={this.handleEndTime}
+                    label="End Time"
+                  />
+                </Grid>
+              </MuiPickersUtilsProvider>
               <TextField
                 name="location"
                 type="text"

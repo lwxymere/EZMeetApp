@@ -1,5 +1,12 @@
 import React from 'react';
 
+import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Divider from '@material-ui/core/Divider'
+
 import { withFirebase } from '../Firebase';
 import { DeleteEventButton, EditEventButton } from './createEvent';
 
@@ -59,10 +66,15 @@ class UserEventsList extends React.Component {
     const { events, loading } = this.state;
 
     return (
-      <div>
-        <h1>Upcoming Events</h1>
-
-        <EventList events={events} loading={loading} />
+      <div className="eventRootDiv">
+        <Paper className="contentcss">
+        <Typography component="div">
+          <Box className="eventTitle" fontSize="h4.fontSize">
+            Upcoming Events
+          </Box>
+            <EventList events={events} loading={loading} />
+        </Typography>
+        </Paper>
       </div>
     );
   }
@@ -72,27 +84,45 @@ const EventList = ({ events, loading }) => {
   if (loading) { // loading from database
     return (
       <div>
-        {loading && <p>Loading Events...</p>}
+        {loading && <p className="noEventorLoading">Loading Events...</p>}
       </div>
     );
   } else if (events.length === 0) { // no upcoming events
     return (
-      <div>You have no upcoming events</div>
+      <div className="noEventorLoading">You have no upcoming events. <br/> Why not create one?</div>
     );
   } else { // render user events
     return (
-      <div>
+      <div className="eventListed">
         { /* Can shift this into another seperate component */}
         {events.map(event => (
-          <div key={event.id}>
-            <h3>{event.eventName}</h3>
-            <EditEventButton eventData={event} />
-            <DeleteEventButton eventData={event} />
-            <p>{event.startTime}</p>
-            <p>{event.endTime}</p>
-            <p>{event.location}</p>
-            <p>{event.details}</p>
-          </div>
+          <Card key={event.id} className="eventCards">
+            <CardContent className="eventCardContent">
+              <div className="eventContentHeader">
+              <Typography className="eventContentTitle" variant="h5" component="div">
+                {event.eventName}
+              </Typography>
+              <div className="eventContentButtons">
+              <EditEventButton eventData={event} />
+              <DeleteEventButton eventData={event} />
+              </div>
+              </div> 
+              <Divider />
+
+              <Typography className="eventContentText" variant="body2" component="p">
+                Start Time: {event.startTime}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                End Time: {event.endTime}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                Where? : {event.location}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                What? : {event.details}
+              </Typography>
+            </CardContent>
+          </Card>
         ))}
       </div>
     );

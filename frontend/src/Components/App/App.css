@@ -98,8 +98,8 @@ body, html, #root, .mainbody {
 }
 
 
-/* Content */
-.contentBar{
+/* Profile */
+.profileBar{
   background-image: radial-gradient(
     at 50% 80%,
     rgb(255, 255, 255) 15%,
@@ -108,18 +108,113 @@ body, html, #root, .mainbody {
   padding-top: 3%;
   padding-bottom: 5%;
 }
-.contentDetails{
+.profileDetails{
   display: flex;
   color: black;
   padding-top: 5px;
 }
-.contentAvatar {
+.profileAvatar {
   background-color: rgb(43, 175, 164) !important;
-  margin-top: 5px;
-  margin-right: 5px;
 }
-.contentNewEvent {
+.profileText {
+  margin-left: 12px;
+}
+.profileNewEvent {
   position: absolute !important;
   right: 5%;
   background-color: grey !important;
+}
+/*for the event's number on top */
+ .MuiSvgIcon-root {
+  left: 0%;
+}
+.profileBadge .MuiBadge-badge {
+  right: 0.5em;
+  top: 1em;
+}
+.profileHiddenButton {
+  padding: 0 !important;
+}
+.TimePicker {
+  padding-top: 5%;
+  justify-content: space-around ;
+  padding-bottom: 3%;
+}
+.indiTimePicker {
+  padding: 2% !important;
+}
+
+.makeStyles-root-145{
+  height: 100%;
+}
+
+/* HomeNavBar */
+.homenavbarBadge .MuiBadge-badge {
+  right: -1em;
+  top: 0.3em;
+}
+
+
+/* Contents */
+/* This is the content over part, that draws the line at the side below the
+blueblue tabs */
+.MuiTypography-body1{
+  padding: 0 !important;
+  height: 100%;
+}
+/* This 2 is to make sure that the height passes down all the way 100% */
+.contentcss {
+  height: 100%;
+}
+.eventRootDiv {
+  height: 100%;
+}
+
+/* No events */
+.noEventorLoading {
+  text-align: center;
+}
+
+/* All the card css-es are here */
+.eventCardContent {
+  height: 100%;
+  width: 100%;
+}
+.eventTitle {
+  padding: 1%;
+  text-decoration: underline;
+  text-align: center;
+}
+.eventListed {
+  display: flex;
+  justify-content: space-around;
+  flex-flow: wrap;
+  padding-top: 1%;
+  padding-bottom: 4%;
+}
+.eventCards {
+  display: flex;
+  justify-content: center;
+  margin: 5px;
+  width: 300px;
+}
+.eventContentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+}
+.deleteButton {
+  padding: 0 !important;
+  min-width: 30px !important;
+}
+.eventContentButtons {
+  display: flex;
+  flex-direction: row;
+}
+.eventContentTitle {
+  text-decoration: underline;
+}
+.eventContentText{
+  padding: 5px;
 }
