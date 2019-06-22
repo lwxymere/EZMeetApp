@@ -162,13 +162,6 @@ blueblue tabs */
   padding: 0 !important;
   height: 100%;
 }
-/* This 2 is to make sure that the height passes down all the way 100% */
-.contentcss {
-  height: 100%;
-}
-.eventRootDiv {
-  height: 100%;
-}
 
 /* No events */
 .noEventorLoading {

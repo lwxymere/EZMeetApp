@@ -18,6 +18,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PeopleIcon from "@material-ui/icons/People";
 import EventIcon from "@material-ui/icons/Event";
 import CalendarIcon from "@material-ui/icons/CalendarToday";
+import ContactIcon from "@material-ui/icons/Contacts";
 import InspirationIcon from "@material-ui/icons/Whatshot";
 import MoneyIcon from "@material-ui/icons/Money";
 
@@ -195,6 +196,9 @@ const HomeNavBar = ({ authUser }) => {
           <Tooltip title="Calendar" placement="bottom">
             <LinkTab icon={<CalendarIcon />} href="/calendar" />
           </Tooltip>
+          <Tooltip title="Contact" placement="bottom">
+            <LinkTab icon={<ContactIcon />} href="/contact" />
+          </Tooltip>
           <Tooltip title="Inspirations" placement="bottom">
             <LinkTab icon={<InspirationIcon />} href="/noidea" />
           </Tooltip>
@@ -205,8 +209,9 @@ const HomeNavBar = ({ authUser }) => {
       </AppBar>
       {value === 0 && <TabContainer> <UserEventsList authUser={authUser}/> </TabContainer>}
       {value === 1 && <TabContainer> Google Calendar </TabContainer>}
-      {value === 2 && <TabContainer> EventBrite API Soontm </TabContainer>}
-      {value === 3 && <TabContainer> O$P$ </TabContainer>}
+      {value === 2 && <TabContainer> Contacts </TabContainer>}
+      {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
+      {value === 4 && <TabContainer> O$P$ </TabContainer>}
     </div>
   );
 }
