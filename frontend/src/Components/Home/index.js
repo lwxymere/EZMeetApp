@@ -1,5 +1,7 @@
 import React, { Fragment } from "react";
 
+import { TheirDebt, YourDebt } from "../IOU";
+
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -22,12 +24,13 @@ import ContactIcon from "@material-ui/icons/Contacts";
 import InspirationIcon from "@material-ui/icons/Whatshot";
 import MoneyIcon from "@material-ui/icons/Money";
 
+import { Badge } from "@material-ui/core";
+
 import PropTypes from 'prop-types';
 
 import { AuthUserContext, withAuthorization } from '../Session';
 import LogoutButton from '../Logout';
 import { UserEventsList, CreateEventForm } from '../Events';
-import { Badge } from "@material-ui/core";
 
 /* 1st AppBar */
 const TitleBar = () => {
@@ -211,7 +214,7 @@ const HomeNavBar = ({ authUser }) => {
       {value === 1 && <TabContainer> Google Calendar </TabContainer>}
       {value === 2 && <TabContainer> Contacts </TabContainer>}
       {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
-      {value === 4 && <TabContainer> O$P$ </TabContainer>}
+      {value === 4 && <TabContainer> <TheirDebt authUser={authUser}/> <YourDebt authUser={authUser}/></TabContainer>}
     </div>
   );
 }

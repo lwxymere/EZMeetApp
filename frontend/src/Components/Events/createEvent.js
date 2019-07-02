@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Grid from '@material-ui/core/Grid';
 
 import DeleteIcon from "@material-ui/icons/Delete";
+import MoneyAttachIcon from "@material-ui/icons/AttachMoney"
 
 import DateFnsUtils from '@date-io/date-fns';
 import {  MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -67,6 +68,7 @@ class CreateEventFormBase extends Component {
     this.props.firebase.db.ref().update(updates)
       .then(result => {
         this.setState({ ...INITIAL_STATE });
+        window.location.reload();
       })
       .catch(error => {
         this.setState({ error });
@@ -359,8 +361,121 @@ class EditEventButtonBase extends Component {
   }
 }
 
+
+// Currently fails when multiple attendees are around since it is unable to this.state for many.
+// try with array and what not ASAP
+
+// TBD the yourdebt and theirdebt part needs to be done as well.
+
+//Save in firebase under IOU. 
+//There are 2 components there - the key and also the debt requested by someone.
+//Key is the someone's ID. value is the entire attendees - stored as dict as well.
+//attendees' dict stored as { payee's ID : payment amount } 
+const INITIAL_PAY_STATE = {
+  payee: "",
+  amount: "0",
+}
+//Remember to change so that this.state.payee can work.
+class CreateDebtsBase extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      eventID: this.props.eventData.id,
+      payeeIDs: this.props.eventData.attendees,
+      payee: "AAA",
+      amount: "",
+      open: false,
+      error: null,
+      owner: this.props.eventData.owner,
+    }
+  }
+
+  handleSubmit = authUser => {
+      var counter = 0;
+      for (let ppl in this.state.payeeIDs) {
+        var debtRef = this.props.firebase.db.ref(`events/${this.state.eventID}`).child("IOU");
+        debtRef.child(`${this.state.owner}`).set({
+          [this.state.payee]: `${this.state.amount}`
+        }).then(() => {
+//          alert( (this.state.amount[counter]) + ' sent to ' + (this.state.payee[counter]))
+          this.setState({ ...INITIAL_PAY_STATE });
+        }).catch((error) => {
+          this.setState({ error });
+        });
+        counter++;
+      }
+      this.handleClose();
+  }
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  handleClose = () => {
+    this.setState({ open: false });
+  }
+
+  handleOpen = () => {
+    this.setState({ open: true });
+  }
+
+  render() {
+    let createForm = [];
+    for (let ppl in this.state.payeeIDs) {
+      createForm.push( <div> {this.state.payeeIDs[ppl]} </div> )
+      createForm.push(
+        <form>
+          { /* Will need to create another component to insert for loop for all attendees */ }
+          <TextField
+            name="amount"
+            type="text"
+            label="Debt Amount"
+            placeholder="Free?"
+            required={true}
+            value={this.state.amount}
+            onChange={this.handleChange}
+            fullWidth 
+          />
+        </form>
+      )
+    }
+
+    return (
+      <Fragment>
+        <Tooltip title="Create Debt" placement="top">
+          <IconButton onClick={this.handleOpen}>
+            <MoneyAttachIcon />
+          </IconButton>
+        </Tooltip>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          fullWidth
+          maxWidth="sm">
+          <DialogTitle>Create Debts</DialogTitle>
+          
+          <DialogContent>
+            <div> {createForm} </div>
+          </DialogContent>
+          
+          <DialogActions>
+            <Button onClick={this.handleClose}>
+              Cancel
+            </Button>
+            <Button onClick={this.handleSubmit}>
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Fragment>
+    );
+  }
+}
+  
+
 const DeleteEventButton = withFirebase(DeleteEventButtonBase);
 const EditEventButton = withFirebase(EditEventButtonBase);
 const CreateEventForm = withFirebase(CreateEventFormBase);
+const CreateDebtForm = withFirebase(CreateDebtsBase);
 
-export { DeleteEventButton, EditEventButton, CreateEventForm };
+export { DeleteEventButton, EditEventButton, CreateEventForm, CreateDebtForm };

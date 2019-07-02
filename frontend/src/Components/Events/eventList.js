@@ -7,8 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider'
 
+import ContactMailIcon from '@material-ui/icons/ContactMail';
+
 import { withFirebase } from '../Firebase';
-import { DeleteEventButton, EditEventButton } from './createEvent';
+import { CreateDebtForm, DeleteEventButton, EditEventButton } from './createEvent';
 
 class UserEventsList extends React.Component {
   constructor(props) {
@@ -103,8 +105,10 @@ const EventList = ({ events, loading }) => {
                 {event.eventName}
               </Typography>
               <div className="eventContentButtons">
+              <CreateDebtForm eventData={event} />
               <EditEventButton eventData={event} />
               <DeleteEventButton eventData={event} />
+              <ContactMailIcon />
               </div>
               </div> 
               <Divider />

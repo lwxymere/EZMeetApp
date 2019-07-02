@@ -1,4 +1,4 @@
 import UserEventsList from './eventList';
-import { EditEventButton, CreateEventForm } from './createEvent';
+import { EditEventButton, CreateEventForm, CreateDebtForm } from './createEvent';
 
-export { UserEventsList, EditEventButton, CreateEventForm };
+export { UserEventsList, EditEventButton, CreateEventForm, CreateDebtForm };
