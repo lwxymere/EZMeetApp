@@ -26,15 +26,11 @@ import ContactIcon from "@material-ui/icons/Contacts";
 import InspirationIcon from "@material-ui/icons/Whatshot";
 import MoneyIcon from "@material-ui/icons/Money";
 
-import { Badge } from "@material-ui/core";
-
 import PropTypes from 'prop-types';
 
 import { AuthUserContext, withAuthorization } from '../Session';
 import LogoutButton from '../Logout';
 import { UserEventsList, CreateEventForm } from '../Events';
-<<<<<<< HEAD
-=======
 import { withFirebase } from '../Firebase';
 import { AddContactsBar } from "../Contacts/addContacts";
 import ContactList from "../Contacts/contactList";
@@ -45,7 +41,6 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
->>>>>>> e4cf7f333b57a68c1d81ba7d813bf87414dbe6a5
 
 /* 1st AppBar */
 const TitleBar = () => {
