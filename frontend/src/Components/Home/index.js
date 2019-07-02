@@ -17,6 +17,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
+import { Badge } from "@material-ui/core";
+
 import PeopleIcon from "@material-ui/icons/People";
 import EventIcon from "@material-ui/icons/Event";
 import CalendarIcon from "@material-ui/icons/CalendarToday";
@@ -31,6 +33,19 @@ import PropTypes from 'prop-types';
 import { AuthUserContext, withAuthorization } from '../Session';
 import LogoutButton from '../Logout';
 import { UserEventsList, CreateEventForm } from '../Events';
+<<<<<<< HEAD
+=======
+import { withFirebase } from '../Firebase';
+import { AddContactsBar } from "../Contacts/addContacts";
+import ContactList from "../Contacts/contactList";
+
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+>>>>>>> e4cf7f333b57a68c1d81ba7d813bf87414dbe6a5
 
 /* 1st AppBar */
 const TitleBar = () => {
@@ -83,27 +98,29 @@ const StyledMenuItem = withStyles(theme => ({
   },
 }))(MenuItem);
 
-const Profile = ({ authUser }) => {
+const Profile = ({ authUser, firebase }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
   }
+
   function handleClose() {
     setAnchorEl(null);
   }
+
   return (
     <div className="profileRootDiv">
       <AppBar className="profileBar" position="static">
         <Toolbar>
         <Typography className="profileDetails">
 
-        <Badge color="primary" badgeContent={4} className="profileBadge">
-          <IconButton  onClick={handleClick} className="profileHiddenButton">
-          <Avatar  className="profileAvatar">
-            {authUser.displayName[0]}
-          </Avatar>
-          </IconButton>
+          <Badge color="primary" badgeContent={4} className="profileBadge">
+            <IconButton  onClick={handleClick} className="profileHiddenButton">
+              <Avatar  className="profileAvatar">
+                {authUser.displayName[0]}
+              </Avatar>
+            </IconButton>
           </Badge>
           <StyledMenu
             anchorEl={anchorEl}
@@ -111,32 +128,136 @@ const Profile = ({ authUser }) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <StyledMenuItem>
-              <ListItemText primary="Help" />
-            </StyledMenuItem>
-            <StyledMenuItem>
-              <ListItemText primary="Help again" />
-            </StyledMenuItem>
-            <StyledMenuItem>
-              <ListItemText primary="Help more" />
-            </StyledMenuItem>
+            <Notifications authUser={authUser} firebase={firebase} />
           </StyledMenu>
 
           <div className="profileText">
-           <div> Welcome, </div>
-           <div> {authUser.displayName} </div>
+            <div> Welcome, </div>
+            <div> {authUser.displayName} </div>
           </div>
         </Typography>
         
-        
         <Button className="profileNewEvent">
-          <CreateEventForm authUser={authUser}/>
+          <CreateEventForm authUser={authUser} firebase={firebase} />
         </Button>        
         </Toolbar>
       </AppBar>
     </div>
   );
 };
+
+// show all received event invites under the profile pic
+class Notifications extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      invites: null,
+    };
+  }
+
+  componentDidMount() {
+    this.setState({ loading: true });
+    this.props.firebase.db.ref(`users/${this.props.authUser.uid}/invites`)
+      .once('value', snapshot => {
+        if (snapshot.val()) {
+          const invites = Object.values(snapshot.val());
+          this.setState({ invites: invites });
+        }
+        this.setState({ loading: false });
+      });
+  }
+
+  handleDecision = (eventData, accept) => {
+    console.log(eventData);
+    const authUser = this.props.authUser;
+    var updates = {};
+    if (accept) { // add event to user events & add user to event attendees
+      console.log('accepted');
+      updates[`users/${authUser.uid}/events/${eventData.id}`] = true;
+      updates[`events/${eventData.id}/attendees/${authUser.uid}`] = authUser.displayName;
+    }
+    // remove the event invitation
+    updates[`users/${authUser.uid}/invites/${eventData.id}`] = null;
+    this.props.firebase.db.ref().update(updates)
+      .then(() => window.location.reload())
+      .catch(error => {console.log(error)});
+  }
+
+  render() {
+    const events = this.state.invites;
+    const loading = this.state.loading;
+    
+    if (loading) { // loading from database
+      return null;
+    } else if (events === null) {
+      return (
+        <StyledMenuItem>
+          <ListItemText primary="You have no new notifications" />
+        </StyledMenuItem>
+      );
+    } else { 
+      return (
+        <Fragment>
+        {events.map(event => (
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1c-content"
+              id="panel1c-header"
+            >
+              <div>
+                <Typography>{"Event invite from " + event.sender}</Typography>
+              </div>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <Typography className="eventContentTitle" variant="h5" component="div">
+                {event.eventName}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                Start Time: {event.startTime}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                End Time: {event.endTime}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                Location : {event.location}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                Details : {event.details}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                Attendees : 
+                <ol>
+                  {Object.values(event.attendees).map((attendee, index) => (
+                      <li key={index}>
+                        {attendee}
+                      </li>
+                    )
+                  )}
+                </ol>
+              </Typography>
+            </ExpansionPanelDetails>
+            <hr />
+            <ExpansionPanelActions>
+              <Button 
+                size="small" 
+                onClick={() => {this.handleDecision(event, false)}} 
+                color="primary"
+              > Decline </Button>
+              <Button 
+                size="small" 
+                onClick={() => {this.handleDecision(event, true)}} 
+                color="primary"
+              > Accept </Button>
+            </ExpansionPanelActions>
+          </ExpansionPanel>
+        ))}
+        </Fragment>
+      );
+    }
+  }
+}
 
 /* For the Blue Tabs */
 /* I'll clean up this inline styling too when there's more time */
@@ -171,7 +292,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const HomeNavBar = ({ authUser }) => {
+const HomeNavBar = ({ authUser, firebase }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -210,24 +331,37 @@ const HomeNavBar = ({ authUser }) => {
           </Tooltip>
         </Tabs>
       </AppBar>
-      {value === 0 && <TabContainer> <UserEventsList authUser={authUser}/> </TabContainer>}
+      {value === 0 && 
+        <TabContainer>
+          <UserEventsList 
+            authUser={authUser} firebase={firebase}
+          />
+        </TabContainer>
+       }
       {value === 1 && <TabContainer> Google Calendar </TabContainer>}
-      {value === 2 && <TabContainer> Contacts </TabContainer>}
+      {value === 2 && 
+        <TabContainer>
+          <Fragment>
+            <AddContactsBar authUser={authUser} />
+            <ContactList authUser={authUser} />
+          </Fragment>
+        </TabContainer>
+      }
       {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
       {value === 4 && <TabContainer> <TheirDebt authUser={authUser}/> <YourDebt authUser={authUser}/></TabContainer>}
     </div>
   );
 }
 
-const HomePage = () => {
+const HomePage = ({ firebase }) => {
   return (
     <Container className="mainbody"> 
       <AuthUserContext.Consumer>
         {authUser => (
           <Fragment>
             <TitleBar />
-            <Profile authUser={authUser} />
-            <HomeNavBar authUser={authUser} />
+            <Profile authUser={authUser} firebase={firebase} />
+            <HomeNavBar authUser={authUser} firebase={firebase} />
           </Fragment>
         )}
       </AuthUserContext.Consumer>
@@ -237,4 +371,4 @@ const HomePage = () => {
 
 const condition = authUser => !!authUser;
 
-export default withAuthorization(condition)(HomePage);
+export default withAuthorization(condition)(withFirebase(HomePage));

@@ -7,10 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider'
 
-import ContactMailIcon from '@material-ui/icons/ContactMail';
-
 import { withFirebase } from '../Firebase';
-import { CreateDebtForm, DeleteEventButton, EditEventButton } from './createEvent';
+import { DeleteEventButton, EditEventButton, InviteDialogButton, CreateDebtForm } from './createEvent';
 
 class UserEventsList extends React.Component {
   constructor(props) {
@@ -74,7 +72,12 @@ class UserEventsList extends React.Component {
           <Box className="eventTitle" fontSize="h4.fontSize">
             Upcoming Events
           </Box>
-            <EventList events={events} loading={loading} />
+            <EventList 
+              firebase={this.props.firebase} 
+              events={events} 
+              loading={loading} 
+              authUser={this.props.authUser} 
+            />
         </Typography>
         </Paper>
       </div>
@@ -82,7 +85,7 @@ class UserEventsList extends React.Component {
   }
 }
 
-const EventList = ({ events, loading }) => {
+const EventList = ({ firebase, events, loading, authUser }) => {
   if (loading) { // loading from database
     return (
       <div>
@@ -105,10 +108,10 @@ const EventList = ({ events, loading }) => {
                 {event.eventName}
               </Typography>
               <div className="eventContentButtons">
-              <CreateDebtForm eventData={event} />
-              <EditEventButton eventData={event} />
-              <DeleteEventButton eventData={event} />
-              <ContactMailIcon />
+              <InviteDialogButton authUser={authUser} eventData={event} />
+              <CreateDebtForm authUser={authUser} eventData={event} />
+              <EditEventButton firebase={firebase} eventData={event} />
+              <DeleteEventButton firebase={firebase} eventData={event} />
               </div>
               </div> 
               <Divider />
@@ -120,10 +123,21 @@ const EventList = ({ events, loading }) => {
                 End Time: {event.endTime}
               </Typography>
               <Typography className="eventContentText" variant="body2" component="p">
-                Where? : {event.location}
+                Location : {event.location}
               </Typography>
               <Typography className="eventContentText" variant="body2" component="p">
-                What? : {event.details}
+                Details : {event.details}
+              </Typography>
+              <Typography className="eventContentText" variant="body2" component="p">
+                Attendees : 
+                <ol>
+                  {Object.values(event.attendees).map((attendee, index) => (
+                      <li key={index}>
+                        {attendee}
+                      </li>
+                    )
+                  )}
+                </ol>
               </Typography>
             </CardContent>
           </Card>

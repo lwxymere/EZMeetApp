@@ -1,8 +1,6 @@
 import React, { Component, Fragment } from 'react';
 
-import "react-datepicker/dist/react-datepicker.css";
-
-import { withFirebase } from '../Firebase';
+import ContactList from '../Contacts/contactList';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -16,17 +14,18 @@ import Grid from '@material-ui/core/Grid';
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoneyAttachIcon from "@material-ui/icons/AttachMoney"
+import EditIcon from '@material-ui/icons/Edit';
+import InviteIcon from '@material-ui/icons/PersonAdd';
 
 import DateFnsUtils from '@date-io/date-fns';
 import {  MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DateTimePicker } from "@material-ui/pickers";
 
-import EditIcon from '@material-ui/icons/Edit';
 
 const INITIAL_STATE = {
   eventName: "",
-  startTime: "",
-  endTime: "",
+  startTime: new Date(),
+  endTime: new Date(),
   location: "",
   details: "",
   open: false,
@@ -34,7 +33,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class CreateEventFormBase extends Component {
+class CreateEventForm extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
@@ -73,9 +72,6 @@ class CreateEventFormBase extends Component {
       .catch(error => {
         this.setState({ error });
       });
-
-    // uncomment if moving createEvent to seperate route
-    //event.preventDefault(); 
   }
 
   handleChange = event => {
@@ -186,34 +182,37 @@ class CreateEventFormBase extends Component {
   }
 }
 
-const DeleteEventButtonBase = ({ eventData, firebase }) => (
-  <Button 
-    
-    className="deleteButton"
-    onClick={() => {
-      const msg = "Are you sure you wish to delete this event?\nThis will delete the event for all attendees";
-      if (window.confirm(msg)) {
-        var attendeeIDs = [];
-        firebase.db.ref(`events/${eventData.id}/attendees`)
-          .once('value', snapshot => {
-            console.log(snapshot.val());
-            attendeeIDs = Object.keys(snapshot.val()).map(key => key);
-            
-            var updates = {};
-            updates[`events/${eventData.id}`] = null;
-            
-            for (let uid of attendeeIDs) {
-              updates[`users/${uid}/events/${eventData.id}`] = null;
-            }
-            firebase.db.ref().update(updates)
-              .then(result => window.location.reload()) // refresh page on delete
+// Consider using a Dialog or sth to give the delete confirmation message
+const DeleteEventButton = ({ eventData, firebase }) => (
+  <Tooltip title="Delete Event" placement="top">
+    <Button
+      className="deleteButton"
+      onClick={() => {
+        const msg = "Are you sure you wish to delete this event?\nThis will delete the event for all attendees";
+        if (window.confirm(msg)) {
+          var attendeeIDs = [];
+          firebase.db.ref(`events/${eventData.id}/attendees`)
+            .once('value', snapshot => {
+              console.log(snapshot.val());
+              attendeeIDs = Object.keys(snapshot.val()).map(key => key);
+
+              var updates = {};
+              updates[`events/${eventData.id}`] = null;
+
+              for (let uid of attendeeIDs) {
+                updates[`users/${uid}/events/${eventData.id}`] = null;
+              }
+
+              firebase.db.ref().update(updates)
+              .then(() => window.location.reload()) // refresh page on delete
               .catch(error => console.log(error));
           })
       }
     }}> <DeleteIcon /> </Button>
+  </Tooltip>
 );
 
-class EditEventButtonBase extends Component {
+class EditEventButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -376,7 +375,7 @@ const INITIAL_PAY_STATE = {
   amount: "0",
 }
 //Remember to change so that this.state.payee can work.
-class CreateDebtsBase extends Component {
+class CreateDebtForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -471,11 +470,59 @@ class CreateDebtsBase extends Component {
     );
   }
 }
+
+class InviteDialogButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      error: null,
+    };
+  }
+
+  handleOpen = () => {
+    this.setState({ open: true });
+  }
+
+  handleClose = () => {
+    this.setState({ open: false });
+  }
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  render() {
+    return (
+      <Fragment>
+        <Tooltip title="Invite Contacts" placement="top">
+          <IconButton onClick={this.handleOpen}>
+            <InviteIcon />
+          </IconButton>
+        </Tooltip>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          fullWidth
+          maxWidth="sm">
+
+          <DialogTitle>Invite a Friend</DialogTitle>
+          <DialogContent>
+            <ContactList authUser={this.props.authUser} eventData={this.props.eventData} />
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={this.handleClose}>
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Fragment>
+    );
+  }
+}
   
 
-const DeleteEventButton = withFirebase(DeleteEventButtonBase);
-const EditEventButton = withFirebase(EditEventButtonBase);
-const CreateEventForm = withFirebase(CreateEventFormBase);
-const CreateDebtForm = withFirebase(CreateDebtsBase);
 
-export { DeleteEventButton, EditEventButton, CreateEventForm, CreateDebtForm };
+export { DeleteEventButton, EditEventButton, CreateEventForm, CreateDebtForm, InviteDialogButton };
+

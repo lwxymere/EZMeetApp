@@ -1,8 +1,9 @@
 import React from "react";
 
+import { SignInGoogle } from "../Login";
+
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -17,11 +18,7 @@ import CalendarIcon from "@material-ui/icons/CalendarToday";
 import MoneyIcon from "@material-ui/icons/AttachMoney";
 import EventIcon from "@material-ui/icons/EventAvailable";
 
-import { Link } from 'react-router-dom';
 import ReactPlayer from "react-player";
-
-import * as ROUTES from '../../Constants/routes';
-//import "../App/App.css";
 
 const LandingPage = () => (
   <Container className="mainbody">
@@ -41,9 +38,7 @@ const TitleBar = () => {
             EZMeet
           </Typography>
 
-          <Button color="primary" className="titlebarButton titlebarLogin">
-           <Link to={ROUTES.LOGIN}> Login </Link>
-          </Button>
+          <SignInGoogle />
 
         </Toolbar>
         <Banner />

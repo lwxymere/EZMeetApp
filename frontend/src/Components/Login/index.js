@@ -4,6 +4,8 @@ import { withRouter, Redirect } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../Constants/routes';
 
+import Button from '@material-ui/core/Button';
+
 class LoginPageWithRedirect extends Component {
   constructor(props) {
     super(props);
@@ -60,18 +62,26 @@ class SignInGoogleBase extends Component {
     this.state = { error: null };
   }
 
-  onSubmit = event => {
+  onClick = event => {
     this.props.firebase
       .doSignInWithGoogle()
-      .then(socialAuthUser => {
+      .then(authUser => {
         // create a user in firebase realtime database
-        if (socialAuthUser.additionalUserInfo.isNewUser) {
+        if (authUser.additionalUserInfo.isNewUser) {
+          var updates = {};
+          updates[`users/${authUser.user.uid}/`] = {
+            username: authUser.user.uid,
+            email: authUser.user.email,
+          };
+          // userEmails will be for adding friends via email address
+          updates[`userEmails/${authUser.user.email}`] = {
+            uid: authUser.user.uid,
+            name: authUser.user.displayName,
+          };
+          
           return this.props.firebase
-            .user(socialAuthUser.user.uid)
-            .set({
-              username: socialAuthUser.user.displayName,
-              email: socialAuthUser.user.email,
-            })
+            .ref()
+            .update(updates)
             .then((result) => {
               this.setState({ error: null });
               this.props.history.push(ROUTES.HOME);
@@ -94,13 +104,25 @@ class SignInGoogleBase extends Component {
     const { error } = this.state;
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <button type="submit">Sign In with Google</button>
-        { error && <p>{error.message}</p>}
-      </form>
+      <div>
+        <Button 
+          onClick={this.onClick} 
+          color="primary" 
+          className="titlebarButton titlebarLogin"
+        >
+          Login
+        </Button>
+        {error && <p>{error && error.message}</p>}
+      </div>
     );
   }
 }
+
+/*
+      <form onSubmit={this.onSubmit}>
+        <button type="submit">Sign In with Google</button>
+        { error && <p>{error.message}</p>}
+      </form>*/
 
 const SignInGoogle = withRouter(withFirebase(SignInGoogleBase));
 
