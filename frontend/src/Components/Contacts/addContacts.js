@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 
 import { withFirebase } from '../Firebase';
+import { Button } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import AddIcon from '@material-ui/icons/PersonAdd';
 
 // need pass props firebase and authUser
 class AddContactsBarBase extends Component {
@@ -65,6 +68,26 @@ class AddContactsBarBase extends Component {
     const submitMsg = this.state.submitMsg;
 
     return (
+      <div className="contactRootDiv">
+        <div className="addContact">
+          <TextField
+            id="outlined-email-input"
+            label="Email"
+            className="addContactform"
+            type="email"
+            name="query"
+            autoComplete="email"
+            margin="dense"
+            variant="outlined"
+            onChange={this.handleChange}
+          />
+          <Button onClick={this.handleSubmit}> <AddIcon/> </Button>
+        </div> 
+          { submitMsg && 
+          <div className="contactError"> {submitMsg} </div> } 
+        </div>
+
+      /*
       <form>
         <input
           name="query"
@@ -76,7 +99,7 @@ class AddContactsBarBase extends Component {
           Add Contact
         </button>
         { submitMsg && <span>{ submitMsg }</span>}
-      </form>
+      </form>*/
     );
   }
 }

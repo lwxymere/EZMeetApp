@@ -33,6 +33,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
+/* This is the pop up form to create event */
 class CreateEventForm extends Component {
   constructor(props) {
     super(props);
@@ -41,8 +42,8 @@ class CreateEventForm extends Component {
 
   handleSubmit = authUser => event => {
     // ensure that endTime is after startTime
-    if (this.state.startTime > this.state.endTime) {
-      this.setState({ timeError: "Invalid End Time" });
+    if (this.state.startTime >= this.state.endTime) {
+      this.setState({ timeError: "Pls review your Start and End Time." });
       return;
     }
     // get unique event id
@@ -57,7 +58,9 @@ class CreateEventForm extends Component {
       location: this.state.location,
       details: this.state.details,
       attendees: { [authUser.uid]: authUser.displayName },
+      IOU: [],
     };
+
 
     // Write new event data to user and event nodes in database
     var updates = {};
@@ -65,7 +68,7 @@ class CreateEventForm extends Component {
     updates[`/users/${authUser.uid}/events/${newEventKey}`] = true;
 
     this.props.firebase.db.ref().update(updates)
-      .then(result => {
+      .then(() => {
         this.setState({ ...INITIAL_STATE });
         window.location.reload();
       })
@@ -126,20 +129,34 @@ class CreateEventForm extends Component {
                     className="indiTimePicker"
                     inputVariant="outlined"
                     disablePast
+                    margin="dense"
                     value={this.state.startTime}
                     onChange={this.handleStartTime}
                     label="Start Time"
+                    minDateMessage=""
+                    required
                   />
                   <DateTimePicker
+                    required
                     id="endTime"
                     className="indiTimePicker"
                     inputVariant="outlined"
                     disablePast
+                    margin="dense"
                     value={this.state.endTime}
                     onChange={this.handleEndTime}
                     label="End Time"
+                    minDateMessage=""
+
                   />
                 </Grid>
+
+                { this.state.timeError && 
+                  <div className="DateErrorDiv"> 
+                    {this.state.timeError} 
+                  </div>
+                }  
+                
               </MuiPickersUtilsProvider>
               
               <TextField
@@ -166,8 +183,6 @@ class CreateEventForm extends Component {
             </form>
           </DialogContent>
           
-          { this.state.timeError && <span>{ this.state.timeError }</span>}
-
           <DialogActions>
             <Button onClick={this.handleClose}>
               Cancel
@@ -188,7 +203,7 @@ const DeleteEventButton = ({ eventData, firebase }) => (
     <Button
       className="deleteButton"
       onClick={() => {
-        const msg = "Are you sure you wish to delete this event?\nThis will delete the event for all attendees";
+        const msg = "Are you sure you wish to delete this event?\nThis will delete the event for all attendees and all debts";
         if (window.confirm(msg)) {
           var attendeeIDs = [];
           firebase.db.ref(`events/${eventData.id}/attendees`)
@@ -249,8 +264,8 @@ class EditEventButton extends Component {
 
   handleSubmit = () => {
     // ensure that endTime is after startTime
-    if (this.state.startTime > this.state.endTime) {
-      this.setState({ timeError: "Invalid End Time" });
+    if (this.state.startTime >= this.state.endTime) {
+      this.setState({ timeError: "Pls review your start and End Time." });
       return;
     }
 
@@ -301,24 +316,38 @@ class EditEventButton extends Component {
                 fullWidth 
               />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
+
                 <Grid container className="TimePicker">
                   <DateTimePicker
                     id="startTime"
                     inputVariant="outlined"
+                    className="indiTimePicker"
                     disablePast
                     value={this.state.startTime}
                     onChange={this.handleStartTime}
                     label="Start Time"
+                    margin="dense"
+                    minDateMessage=""
+                    required
                   />
                   <DateTimePicker
                     id="endTime"
                     inputVariant="outlined"
+                    className="indiTimePicker"
                     disablePast
                     value={this.state.endTime}
                     onChange={this.handleEndTime}
                     label="End Time"
+                    margin="dense"
+                    minDateMessage=""
+                    required
                   />
                 </Grid>
+                { this.state.timeError && 
+                  <div className="DateErrorDiv"> 
+                    {this.state.timeError} 
+                  </div>
+                }  
               </MuiPickersUtilsProvider>
               <TextField
                 name="location"
@@ -339,13 +368,11 @@ class EditEventButton extends Component {
                 value={this.state.details}
                 onChange={this.handleChange}
                 fullWidth
-                multiline rows="3" 
+                multiline rows="2" 
               />
             </form>
           </DialogContent>
           
-          { this.state.timeError && <span>{ this.state.timeError }</span>}
-
           <DialogActions>
             <Button onClick={this.handleClose}>
               Cancel
@@ -360,54 +387,55 @@ class EditEventButton extends Component {
   }
 }
 
-
-// Currently fails when multiple attendees are around since it is unable to this.state for many.
-// try with array and what not ASAP
-
-// TBD the yourdebt and theirdebt part needs to be done as well.
-
-//Save in firebase under IOU. 
-//There are 2 components there - the key and also the debt requested by someone.
-//Key is the someone's ID. value is the entire attendees - stored as dict as well.
-//attendees' dict stored as { payee's ID : payment amount } 
-const INITIAL_PAY_STATE = {
-  payee: "",
-  amount: "0",
-}
-//Remember to change so that this.state.payee can work.
 class CreateDebtForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      author: this.props.authUser,
       eventID: this.props.eventData.id,
       payeeIDs: this.props.eventData.attendees,
-      payee: "AAA",
-      amount: "",
+      owner: this.props.eventData.owner,
+      payees: this.props.eventData.IOU,
+      eventName: this.props.eventData.eventName,
       open: false,
       error: null,
-      owner: this.props.eventData.owner,
+    }
+    if (this.state.payees === undefined || this.state.payees[this.state.author.uid] === undefined) {
+      var temp = []
+      for (let ppl in this.state.payeeIDs) {
+        temp[this.state.payeeIDs[ppl]] = '$'; 
+      }
+      temp['info'] = { 
+        name: this.state.author.displayName,
+        event: this.state.eventName
+      }
+      this.state.payees = temp;
+    } else {
+      this.state.payees =  this.state.payees[this.state.author.uid];
     }
   }
+  
+  handleSubmit = () => {
+    console.log(this.state.payees);
 
-  handleSubmit = authUser => {
-      var counter = 0;
-      for (let ppl in this.state.payeeIDs) {
-        var debtRef = this.props.firebase.db.ref(`events/${this.state.eventID}`).child("IOU");
-        debtRef.child(`${this.state.owner}`).set({
-          [this.state.payee]: `${this.state.amount}`
-        }).then(() => {
-//          alert( (this.state.amount[counter]) + ' sent to ' + (this.state.payee[counter]))
-          this.setState({ ...INITIAL_PAY_STATE });
-        }).catch((error) => {
-          this.setState({ error });
-        });
-        counter++;
-      }
-      this.handleClose();
-  }
+    
+    var updates = {};
+    updates[`/events/${this.state.eventID}/IOU/${this.state.author.uid}`] = this.state.payees;
 
+    this.props.firebase.db.ref().update(updates)
+      .then(() => {
+        //window.location.reload();
+        this.handleClose();
+      })
+      .catch(error => {
+        this.setState({ error });
+      });
+    }
+  
   handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    var insidePayees = { ...this.state.payees,
+    [event.target.name] : event.target.value };
+    this.setState({ payees: insidePayees });
   }
 
   handleClose = () => {
@@ -421,24 +449,22 @@ class CreateDebtForm extends Component {
   render() {
     let createForm = [];
     for (let ppl in this.state.payeeIDs) {
-      createForm.push( <div> {this.state.payeeIDs[ppl]} </div> )
+      createForm.push( <div> { this.state.payeeIDs[ppl] } </div> )
       createForm.push(
         <form>
-          { /* Will need to create another component to insert for loop for all attendees */ }
           <TextField
-            name="amount"
+            name= {this.state.payeeIDs[ppl]}
             type="text"
             label="Debt Amount"
-            placeholder="Free?"
+            placeholder=" $ $ $ "
             required={true}
-            value={this.state.amount}
+            value={ this.state.payees[this.state.payeeIDs[ppl]] }
             onChange={this.handleChange}
-            fullWidth 
           />
         </form>
-      )
+      );
     }
-
+ 
     return (
       <Fragment>
         <Tooltip title="Create Debt" placement="top">

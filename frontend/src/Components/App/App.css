@@ -4,6 +4,7 @@ body, html, #root, .mainbody {
   padding: 0 !important;
 }
 
+/* ----------------- LANDING PAGE ----------------------- */
 /* TitleBar */
 .titleRootDiv {
   flex-grow: 1;
@@ -26,6 +27,7 @@ body, html, #root, .mainbody {
 .titlebarButton .MuiButton-label {
   border-top: solid rgb(170, 163, 163) ;
   border-bottom: solid white;
+  color: white;
 }
 
 /* Banner */
@@ -97,7 +99,7 @@ body, html, #root, .mainbody {
   padding: 3%;
 }
 
-
+/** ----------------------- HomePage ----------------------- **/
 /* Profile */
 .profileBar{
   background-image: radial-gradient(
@@ -122,92 +124,171 @@ body, html, #root, .mainbody {
 .profileNewEvent {
   position: absolute !important;
   right: 5%;
-  background-color: grey !important;
+  background-color: rgb(167, 166, 166) !important;
 }
 /*for the event's number on top */
+ /* I forgot what this is for and it seems useless lol ^ seems like a lie
  .MuiSvgIcon-root {
-  left: 0%;
+  left: 100%;
 }
+*/
+/* This is for the placement of number on top of avatar */
 .profileBadge .MuiBadge-badge {
   right: 0.5em;
-  top: 1em;
+  top: 1em; 
 }
+/*Hidden button on the Avatar */
 .profileHiddenButton {
   padding: 0 !important;
 }
+
+/*  Start/End Time for Event */
 .TimePicker {
-  padding-top: 5%;
+  padding-top: 2%;
   justify-content: space-around ;
-  padding-bottom: 3%;
+  padding-bottom: 1%;
 }
 .indiTimePicker {
   padding: 2% !important;
 }
+.DateErrorDiv {
+  text-align: center;
+  /*border: solid 5px red;*/
+  text-decoration: underline double red;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+/*
+/* The Red Error Message below the dates*
+.MuiFormHelperText-contained {
+  margin: 8px 12px;
+}
+/* The space around the Date, inbetween the border and date *
+.MuiOutlinedInput-input {
+  padding: 8.5px 14px !important;
+}
+*/
 
 .makeStyles-root-145{
   height: 100%;
 }
 
 /* HomeNavBar */
+/* The Red Circle above Event page */
 .homenavbarBadge .MuiBadge-badge {
   right: -1em;
   top: 0.3em;
 }
 
 
-/* Contents */
-/* This is the content over part, that draws the line at the side below the
+/** --------------------- Contents --------------------- **/
+/* This is the content part, that draws the line at the side below the
 blueblue tabs */
-.MuiTypography-body1{
+.MuiTypography-body{
   padding: 0 !important;
-  height: 100%;
+  height: 100% !important;
 }
-
-/* No events */
-.noEventorLoading {
-  text-align: center;
+/*
+.contentRootDiv {
 }
-
-/* All the card css-es are here */
-.eventCardContent {
-  height: 100%;
-  width: 100%;
-}
-.eventTitle {
-  padding: 1%;
+.contentcss {
+}*/
+.contentTitle {
+  padding: 3% 3% 1% 3%;
   text-decoration: underline;
   text-align: center;
 }
-.eventListed {
+.contentListed {
   display: flex;
   justify-content: space-around;
   flex-flow: wrap;
   padding-top: 1%;
   padding-bottom: 4%;
 }
+.deleteButton {
+  padding: 0 !important;
+  padding-bottom: 2px !important;
+  min-width: 30px !important;
+}
+/* Loading */
+.nothingorLoading {
+  text-align: center;
+}
+
+/** --------------- EVENT tab ---------------- **/
 .eventCards {
   display: flex;
   justify-content: center;
   margin: 5px;
-  width: 300px;
+  width: 275px;
+  /*This is to create the border color which is apparently illegal */
+  padding: 5px;
+  float: left;
+  box-shadow: inset 0 0 0 5px rgb(238, 238, 238) !important;
+}
+.eventCardContent {
+  height: 100%;
+  width: 100%;
+  padding: 0 !important;
 }
 .eventContentHeader {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px;
-}
-.deleteButton {
-  padding: 0 !important;
-  min-width: 30px !important;
+  justify-content: center;
+  text-transform: uppercase;
+  background-color: rgb(255, 255, 173);
+  padding: 10px;
 }
 .eventContentButtons {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  background-color: rgb(255, 255, 173);
 }
 .eventContentTitle {
   text-decoration: underline;
 }
+.eventContent{
+  padding: 10px;
+}
 .eventContentText{
   padding: 5px;
+}
+
+
+/** ----------------- Contact Tab ------------- **/
+.addContact {
+  display: flex;
+  justify-content: center;
+  padding: 7px;
+}
+.contactError{
+  text-align: center;
+  color: rgb(255, 71, 71);
+  text-decoration: underline;
+}
+
+
+/** ------------------- Payment Tab -------------- **/
+.allPayment{
+  display: flex;
+  justify-content: space-around;  
+  padding: 4%;
+}
+.theirPayment{
+  padding: 10px;
+  border: solid lightblue;
+}
+.yourPayment{
+  padding: 10px;
+  border: solid red;
+}
+.paymentTitle{
+  text-align: center;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.paymentContent{
+  text-align: center;
 }

@@ -66,10 +66,10 @@ class UserEventsList extends React.Component {
     const { events, loading } = this.state;
 
     return (
-      <div className="eventRootDiv">
+      <div className="contentRootDiv">
         <Paper className="contentcss">
         <Typography component="div">
-          <Box className="eventTitle" fontSize="h4.fontSize">
+          <Box className="contentTitle" fontSize="h4.fontSize">
             Upcoming Events
           </Box>
             <EventList 
@@ -89,56 +89,66 @@ const EventList = ({ firebase, events, loading, authUser }) => {
   if (loading) { // loading from database
     return (
       <div>
-        {loading && <p className="noEventorLoading">Loading Events...</p>}
+        {loading && <p className="nothingorLoading">Loading Events...</p>}
       </div>
     );
   } else if (events.length === 0) { // no upcoming events
     return (
-      <div className="noEventorLoading">You have no upcoming events. <br/> Why not create one?</div>
+      <div className="nothingorLoading">You have no upcoming events. <br/> Why not create one?</div>
     );
   } else { // render user events
     return (
-      <div className="eventListed">
+      <div className="contentListed">
         { /* Can shift this into another seperate component */}
         {events.map(event => (
           <Card key={event.id} className="eventCards">
             <CardContent className="eventCardContent">
               <div className="eventContentHeader">
-              <Typography className="eventContentTitle" variant="h5" component="div">
-                {event.eventName}
-              </Typography>
-              <div className="eventContentButtons">
-              <InviteDialogButton authUser={authUser} eventData={event} />
-              <CreateDebtForm authUser={authUser} eventData={event} />
-              <EditEventButton firebase={firebase} eventData={event} />
-              <DeleteEventButton firebase={firebase} eventData={event} />
+                <Typography className="eventContentTitle" variant="h5" component="div">
+                  {event.eventName}
+                </Typography>
               </div>
+              <div className="eventContentButtons">
+                <InviteDialogButton authUser={authUser} eventData={event} />
+                <CreateDebtForm authUser={authUser} firebase={firebase} eventData={event} />
+                <EditEventButton firebase={firebase} eventData={event} />
+                <DeleteEventButton firebase={firebase} eventData={event} />
               </div> 
+
               <Divider />
 
-              <Typography className="eventContentText" variant="body2" component="p">
-                Start Time: {event.startTime}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                End Time: {event.endTime}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Location : {event.location}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Details : {event.details}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Attendees : 
-                <ol>
-                  {Object.values(event.attendees).map((attendee, index) => (
-                      <li key={index}>
-                        {attendee}
-                      </li>
-                    )
-                  )}
-                </ol>
-              </Typography>
+              <div className="eventContent"> 
+                <Typography className="eventContentText" variant="body2" component="p">
+                  Start Time: {event.startTime}
+                </Typography>
+                <Typography className="eventContentText" variant="body2" component="p">
+                  End Time: {event.endTime}
+                </Typography>
+                <Typography className="eventContentText" variant="body2" component="p">
+                  Location : {event.location}
+                </Typography>
+                <Typography className="eventContentText" variant="body2" component="p">
+                  Details : {event.details}
+                </Typography>
+              
+              
+              
+                { /* I want to change this to some form of expansion panel but its so ugly so idk :/ */}
+                <Typography className="eventContentText" variant="body2" component="p">
+                  Attendees : 
+                  <ol>
+                    {Object.values(event.attendees).map((attendee, index) => (
+                        <li key={index}>
+                          {attendee}
+                        </li>
+                      )
+                    )}
+                  </ol>
+                </Typography>
+              </div>
+
+
+
             </CardContent>
           </Card>
         ))}

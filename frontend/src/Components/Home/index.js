@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 
-import { TheirDebt, YourDebt } from "../IOU";
+//import Payment from "../IOU";
+import { YourDebt, TheirDebt } from '../IOU';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -32,7 +33,6 @@ import { AuthUserContext, withAuthorization } from '../Session';
 import LogoutButton from '../Logout';
 import { UserEventsList, CreateEventForm } from '../Events';
 import { withFirebase } from '../Firebase';
-import { AddContactsBar } from "../Contacts/addContacts";
 import ContactList from "../Contacts/contactList";
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -258,7 +258,7 @@ class Notifications extends React.Component {
 /* I'll clean up this inline styling too when there's more time */
 function TabContainer(props) {
   return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
+    <Typography component="div">
       {props.children}
     </Typography>
   );
@@ -326,24 +326,12 @@ const HomeNavBar = ({ authUser, firebase }) => {
           </Tooltip>
         </Tabs>
       </AppBar>
-      {value === 0 && 
-        <TabContainer>
-          <UserEventsList 
-            authUser={authUser} firebase={firebase}
-          />
-        </TabContainer>
-       }
+      {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase}/> </TabContainer>}
       {value === 1 && <TabContainer> Google Calendar </TabContainer>}
-      {value === 2 && 
-        <TabContainer>
-          <Fragment>
-            <AddContactsBar authUser={authUser} />
-            <ContactList authUser={authUser} />
-          </Fragment>
-        </TabContainer>
-      }
+      {value === 2 && <TabContainer> <ContactList authUser={authUser} /> </TabContainer> }
       {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
-      {value === 4 && <TabContainer> <TheirDebt authUser={authUser}/> <YourDebt authUser={authUser}/></TabContainer>}
+      { /* value === 4 && <TabContainer> <Payment authUser={authUser}/> </TabContainer> */ }
+      {  value === 4 && <TabContainer> <YourDebt authUser={authUser}/> <TheirDebt authUser={authUser}/> </TabContainer>  }
     </div>
   );
 }

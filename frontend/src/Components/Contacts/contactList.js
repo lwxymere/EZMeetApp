@@ -9,6 +9,8 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add"
 
+import { AddContactsBar } from "./addContacts";
+
 import { withFirebase } from '../Firebase';
 
 class ContactList extends React.Component {
@@ -51,19 +53,22 @@ class ContactList extends React.Component {
     const { contacts, loading } = this.state;
 
     return (
-      <div className="eventRootDiv">
+      <div className="contentRootDiv">
         <Paper className="contentcss">
         <Typography component="div">
-          <Box className="eventTitle" fontSize="h4.fontSize">
+          <Box className="contentTitle" fontSize="h4.fontSize">
             My Contacts
           </Box>
-            <Contacts 
-              firebase={this.props.firebase} 
-              contacts={contacts} 
-              loading={loading}
-              authUser={this.props.authUser}
-              eventData={this.props.eventData}
-            />
+          <div className="addContacts"> 
+            <AddContactsBar authUser={this.props.authUser} />
+          </div>
+          <Contacts 
+            firebase={this.props.firebase} 
+            contacts={contacts} 
+            loading={loading}
+            authUser={this.props.authUser}
+            eventData={this.props.eventData}
+          />
         </Typography>
         </Paper>
       </div>
@@ -75,14 +80,14 @@ const Contacts = ({ firebase, contacts, loading, authUser, eventData }) => {
   if (loading) { // loading from database
     return (
       <div>
-        {loading && <p className="noEventorLoading">Loading Contacts...</p>}
+        {loading && <p className="nothingorLoading">Loading Contacts...</p>}
       </div>
     );
   } else if (contacts.length === 0) {
     return null;
   } else { // render user events
     return (
-      <ol className="eventListed">
+      <ol className="contentListed">
         {contacts.map(contact => (
           <li key={contact.uid}>
             <div>
