@@ -156,7 +156,7 @@ class CreateEventForm extends Component {
                     {this.state.timeError} 
                   </div>
                 }  
-                
+
               </MuiPickersUtilsProvider>
               
               <TextField
@@ -405,9 +405,10 @@ class CreateDebtForm extends Component {
       for (let ppl in this.state.payeeIDs) {
         temp[this.state.payeeIDs[ppl]] = '$'; 
       }
-      temp['info'] = { 
+      temp['eventDetail'] = { 
         name: this.state.author.displayName,
-        event: this.state.eventName
+        eventName: this.state.eventName,
+        eventID: this.state.eventID,
       }
       this.state.payees = temp;
     } else {

@@ -67,6 +67,7 @@ class SignInGoogleBase extends Component {
       .doSignInWithGoogle()
       .then(authUser => {
         // create a user in firebase realtime database
+        console.log(authUser);
         if (authUser.additionalUserInfo.isNewUser) {
           var updates = {};
           updates[`users/${authUser.user.uid}/`] = {
@@ -108,7 +109,7 @@ class SignInGoogleBase extends Component {
         <Button 
           onClick={this.onClick} 
           color="primary" 
-          className="titlebarButton titlebarLogin"
+          className="titlebarButton"
         >
           Login
         </Button>

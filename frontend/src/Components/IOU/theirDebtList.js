@@ -2,11 +2,10 @@ import React from 'react';
 
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
-import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "@material-ui/icons/Done";
 
 import { withFirebase } from '../Firebase';
 
@@ -16,7 +15,7 @@ class TheirDebt extends React.Component {
     this.state = {
       Tdebts: [],
       loading: false,
-      info: [],
+      eventsDetails: [],
       eventIDs: [],
     };
   }
@@ -30,9 +29,10 @@ class TheirDebt extends React.Component {
   getTdebt() {
     var promises = [];
     this.getEventIDs().then(data => {
-      console.log(this.state.eventIDs);
+      //console.log(this.state.eventIDs);
       //this.state.eventIDs.forEach(id => {
-      for (let id in this.state.eventIDs) { 
+      for (let id of this.state.eventIDs) { 
+        //console.log(id);
         const promise = this.props.firebase.db
           .ref(`events/${id}/IOU`)
           .once('value');
@@ -43,17 +43,17 @@ class TheirDebt extends React.Component {
     }).then(snapshots => {
       var Tdebts = [];
       snapshots.forEach(snapshot => {
-        var infos = snapshot.child(`${this.props.authUser.uid}`).val();
-        console.log(snapshot.val());
-        if (snapshot.val()) {
-          console.log(infos);
-          if (infos['info'] !== undefined) {
-            var temp=this.state.info;
-            temp.push(infos['info']);
-            this.setState ({ info: temp });
-            delete infos.info;
+        var eventDetails = snapshot.child(`${this.props.authUser.uid}`).val();
+        //console.log(eventDetails);
+        if (eventDetails) {
+          if (eventDetails.eventDetail !== undefined) {
+            var temp=this.state.eventsDetails;
+            temp.push(eventDetails.eventDetail);
+            //console.log(temp);
+            this.setState ({ eventsDetails: temp });
+            delete eventDetails.eventDetail;
           }
-          Tdebts.push(infos);
+          Tdebts.push(eventDetails);
         }
       });
       this.setState({ Tdebts: Tdebts, loading: false });
@@ -68,25 +68,11 @@ class TheirDebt extends React.Component {
         const eventIDs = Object.keys(snapshot.val()).map(key => key);
         this.setState({ eventIDs: eventIDs });
         }
-        console.log(this.state.eventIDs);
       })
       .catch(error => {
         this.setState({ error });
       });
     }
-  /*
-  getEventIDs() {
-    return this.props.firebase.db
-      .ref(`users/${this.props.authUser.uid}/events`)
-      .once('value', snapshot => {
-        if (!snapshot.val()) return; // band-aid fix for no events
-        const eventIDs = Object.keys(snapshot.val()).map(key => key);
-        this.setState({ eventIDs: eventIDs });
-      })
-      .catch(error => {
-        this.setState({ error });
-      });
-  }*/
   
   /*
   componentWillUnmount() {
@@ -96,7 +82,7 @@ class TheirDebt extends React.Component {
   }*/
 
   render() {
-    const { Tdebts, loading, eventIDs, info } = this.state;
+    const { Tdebts, loading, eventsDetails } = this.state;
 
     return (
       <div className="contentRootDiv">
@@ -105,14 +91,13 @@ class TheirDebt extends React.Component {
           <Box className="contentTitle" fontSize="h4.fontSize">
             Their Debt
           </Box>
-            <TDebts 
-              firebase={this.props.firebase} 
-              authUser={this.props.authUser}
-              Tdebts={Tdebts} 
-              loading={loading}
-              eventIDs={eventIDs}
-              info={info}
-            />
+          <TDebts 
+            firebase={this.props.firebase} 
+            authUser={this.props.authUser}
+            Tdebts={Tdebts} 
+            eventsDetails={eventsDetails}
+            loading={loading}
+          />
         </Typography>
         </Paper>
       </div>
@@ -120,7 +105,7 @@ class TheirDebt extends React.Component {
   }
 }
 
-const TDebts = ({ firebase, Tdebts, loading, eventIDs, info, authUser }) => {
+const TDebts = ({ firebase, Tdebts, loading, eventsDetails, authUser }) => {
   if (loading) { // loading from database
     return (
       <div>
@@ -129,32 +114,33 @@ const TDebts = ({ firebase, Tdebts, loading, eventIDs, info, authUser }) => {
     );
   } else if (Tdebts.length === 0) {
     return ( 
-      <div className="nothingorLoading"> There is no debts others owe you. </div>
+      <div className="nothingorLoading"> All debts are cleared by others. </div>
     )
   } else { // render user events
 
     var allPayments = [];
-
     for (let num in Tdebts) {
       var eachPayment = [];
       //if (num !== '0') { 
         //alert(num);
         //list.push( <Divider /> )};
 
-      // console.log(num);
+      console.log(Tdebts[num]);
+      console.log(eventsDetails[num]);
       eachPayment.push(
-        <div className="paymentTitle"> Event: {info[num].event} </div> 
+        <div className="paymentTitle"> Event: {eventsDetails[num].eventName} </div> 
       )
       for (let name in Tdebts[num]) {
-        // console.log(Tdebts[num][name]);
+        console.log(name);
         eachPayment.push(
           <div className="paymentContent"> 
-          <div className="paymentContent"> { info[num].name }: {Tdebts[num][name]} </div> 
-          <DeleteDebtButton 
-          eventID = {eventIDs[num]}
+          <div className="paymentContent"> { name }: {Tdebts[num][name]} </div> 
+          
+          <DeleteDebtButton
+          eventID = {eventsDetails[num].eventID}
           authUser={authUser}
           firebase={firebase}
-          info={info[num].name}/>
+          eventsDetails={name}/>
           </div>
         )
       }
@@ -171,13 +157,13 @@ const TDebts = ({ firebase, Tdebts, loading, eventIDs, info, authUser }) => {
   }
 };
 
-
-const DeleteDebtButton = ({ eventID, authUser, firebase, info }) => (
+const DeleteDebtButton = ({ eventID, authUser, firebase, eventsDetails }) => (
   <Tooltip title="Settled" placement="top">
     <Button
       className="deleteButton"
       onClick={() => {
         const msg = "Repaid?";
+
         if (window.confirm(msg)) {
           var size = 5;
           firebase.db.ref(`events/${eventID}/IOU/${authUser.uid}`).once('value')
@@ -190,7 +176,7 @@ const DeleteDebtButton = ({ eventID, authUser, firebase, info }) => (
             if (size === 2) {
               updates[`events/${eventID}/IOU/${authUser.uid}`] = null;
             } else {
-              updates[`events/${eventID}/IOU/${authUser.uid}/${info}`] = null;
+              updates[`events/${eventID}/IOU/${authUser.uid}/${eventsDetails}`] = null;
             }
             firebase.db.ref().update(updates)
             .catch(error => console.log(error));
