@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 
 //import Payment from "../IOU";
 import { YourDebt, TheirDebt } from '../IOU';
+import CalendarRoot from '../Calendar';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -258,12 +259,11 @@ class Notifications extends React.Component {
 /* I'll clean up this inline styling too when there's more time */
 function TabContainer(props) {
   return (
-    <Typography component="div">
+    <Typography component="div" className="tabcontentDiv">
       {props.children}
     </Typography>
   );
 }
-
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
 };
@@ -280,15 +280,7 @@ function LinkTab(props) {
   );
 }
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
 const HomeNavBar = ({ authUser, firebase }) => {
-  const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   function handleChange(event, newValue) {
@@ -296,7 +288,7 @@ const HomeNavBar = ({ authUser, firebase }) => {
   }
 
   return (
-     <div className={classes.root}>
+     <div className="tabRootDiv">
       <AppBar position="static">
         <Tabs variant="fullWidth" value={value} onChange={handleChange}>
           <Tooltip title="Event" placement="bottom">
@@ -327,7 +319,7 @@ const HomeNavBar = ({ authUser, firebase }) => {
         </Tabs>
       </AppBar>
       {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase}/> </TabContainer>}
-      {value === 1 && <TabContainer> Google Calendar </TabContainer>}
+      {value === 1 && <TabContainer> <CalendarRoot /> </TabContainer>}
       {value === 2 && <TabContainer> <ContactList authUser={authUser} /> </TabContainer> }
       {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
       { /* value === 4 && <TabContainer> <Payment authUser={authUser}/> </TabContainer> */ }

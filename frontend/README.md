@@ -16,6 +16,14 @@ Please update when you install new things.
 
 `npm install react-player --save`
 
+`npm install @date-io/date-fns`
+
+`npm install date-fns@next`
+
+`npm install --save react-big-calendar`
+
+
+
 ________________________________________________
 
 

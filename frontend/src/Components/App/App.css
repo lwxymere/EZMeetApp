@@ -193,6 +193,12 @@ blueblue tabs */
 }
 .contentcss {
 }*/
+.tabRootDiv{
+  height: 100%;
+}
+.tabcontentDiv{
+  height: 100%;
+}
 .contentTitle {
   padding: 3% 3% 1% 3%;
   text-decoration: underline;
@@ -254,6 +260,19 @@ blueblue tabs */
 }
 .eventContentText{
   padding: 5px;
+}
+
+/** ----------------- Calendar --------------- **/
+/* The calendar is not mobile friendly eh */
+.calendar{
+  height: 75%;
+  padding: 3%;
+}
+.rbc-btn-group{
+  padding: 1%;
+}
+.rbc-row-segment{
+  font-size: 0.6em;
 }
 
 
