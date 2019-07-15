@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 
-//import Payment from "../IOU";
-import { YourDebt, TheirDebt } from '../IOU';
+import Payment from "../IOU";
+//import { YourDebt, TheirDebt } from '../IOU';
 import CalendarRoot from '../Calendar';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -165,19 +165,23 @@ class Notifications extends React.Component {
   }
 
   handleDecision = (eventData, accept) => {
-    console.log(eventData);
     const authUser = this.props.authUser;
     var updates = {};
-    if (accept) { // add event to user events & add user to event attendees
-      console.log('accepted');
-      updates[`users/${authUser.uid}/events/${eventData.id}`] = true;
-      updates[`events/${eventData.id}/attendees/${authUser.uid}`] = authUser.displayName;
-    }
-    // remove the event invitation
-    updates[`users/${authUser.uid}/invites/${eventData.id}`] = null;
-    this.props.firebase.db.ref().update(updates)
-      .then(() => window.location.reload())
-      .catch(error => {console.log(error)});
+
+    this.props.firebase.db.ref(`events/${eventData.id}`)
+      .once('value', snapshot => {
+        if (accept && snapshot.exists()) {
+          // if event still exists when notification is accepted,
+          // add the event to user events & add user to event attendees
+          updates[`users/${authUser.uid}/events/${eventData.id}`] = true;
+          updates[`events/${eventData.id}/attendees/${authUser.uid}`] = authUser.displayName;
+        }
+        // remove the event invitation
+        updates[`users/${authUser.uid}/invites/${eventData.id}`] = null;
+        this.props.firebase.db.ref().update(updates)
+          .then(() => window.location.reload() )
+          .catch(error => { console.log(error) });
+      });
   }
 
   render() {
@@ -322,8 +326,8 @@ const HomeNavBar = ({ authUser, firebase }) => {
       {value === 1 && <TabContainer> <CalendarRoot /> </TabContainer>}
       {value === 2 && <TabContainer> <ContactList authUser={authUser} /> </TabContainer> }
       {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
-      { /* value === 4 && <TabContainer> <Payment authUser={authUser}/> </TabContainer> */ }
-      {  value === 4 && <TabContainer> <YourDebt authUser={authUser}/> <TheirDebt authUser={authUser}/> </TabContainer>  }
+      { value === 4 && <TabContainer> <Payment authUser={authUser}/> </TabContainer> }
+      { /* value === 4 && <TabContainer> <YourDebt authUser={authUser}/> <TheirDebt authUser={authUser}/> </TabContainer> */ }
     </div>
   );
 }

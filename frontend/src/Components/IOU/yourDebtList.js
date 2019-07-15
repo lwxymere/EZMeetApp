@@ -31,6 +31,8 @@ class YourDebt extends React.Component {
     this.getEventIDs().then(data => {
       //console.log(this.state.eventIDs);
       //this.state.eventIDs.forEach(id => {
+      if (!this.state.eventIDs) return; // no event IDs found
+
       for (let id of this.state.eventIDs) { 
         const promise = this.props.firebase.db
           .ref(`events/${id}/IOU`)
@@ -40,6 +42,11 @@ class YourDebt extends React.Component {
       // ensure all API calls are completed before proceeding
       return Promise.all(promises);
     }).then(snapshots => {
+      if (!snapshots) { // no snapshots found
+        this.setState({ loading: false });
+        return;
+      }
+
       var Ydebts = [];
       var userIDs = [];
       snapshots.forEach(snapshot => {
