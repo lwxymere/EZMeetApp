@@ -87,7 +87,7 @@ class TheirDebt extends React.Component {
     return (
       <div className="contentRootDiv">
         <Paper className="contentcss">
-        <Typography component="div">
+        <Typography component="div" className="paymentPaper">
           <Box className="contentTitle" fontSize="h4.fontSize">
             Their Debt
           </Box>
@@ -109,7 +109,7 @@ const TDebts = ({ firebase, Tdebts, loading, eventsDetails, authUser }) => {
   if (loading) { // loading from database
     return (
       <div>
-        {loading && <p className="noEventorLoading">Loading Debts...</p>}
+        {loading && <p className="nothingorLoading">Loading Debts...</p>}
       </div>
     );
   } else if (Tdebts.length === 0) {

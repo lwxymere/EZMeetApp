@@ -323,11 +323,10 @@ const HomeNavBar = ({ authUser, firebase }) => {
         </Tabs>
       </AppBar>
       {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase}/> </TabContainer>}
-      {value === 1 && <TabContainer> <CalendarRoot /> </TabContainer>}
+      {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase}/> </TabContainer>}
       {value === 2 && <TabContainer> <ContactList authUser={authUser} /> </TabContainer> }
       {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
       { value === 4 && <TabContainer> <Payment authUser={authUser}/> </TabContainer> }
-      { /* value === 4 && <TabContainer> <YourDebt authUser={authUser}/> <TheirDebt authUser={authUser}/> </TabContainer> */ }
     </div>
   );
 }

@@ -290,6 +290,24 @@ blueblue tabs */
 
 
 /** ------------------- Payment Tab -------------- **/
+.paymentRootDiv {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+.debt {
+  flex-grow: 1;
+}
+.leftBorder {
+  border-left: solid 3px rgb(150, 95, 95);
+}
+.topBorder {
+  border-top: solid 3px rgb(150, 95, 95);
+}
+.paymentPaper{
+  padding-bottom: 5%;
+}
 .allPayment{
   display: flex;
   justify-content: space-around;  

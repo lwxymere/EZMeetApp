@@ -109,7 +109,7 @@ class YourDebt extends React.Component {
     return (
       <div className="contentRootDiv">
         <Paper className="contentcss">
-        <Typography component="div">
+        <Typography component="div" className="paymentPaper">
           <Box className="contentTitle" fontSize="h4.fontSize">
             Your Debt
           </Box>
@@ -133,12 +133,12 @@ const YDebts = ({ firebase, Ydebts, loading, userIDs, authUser, eventsDetails })
   if (loading) { // loading from database
     return (
       <div>
-        {loading && <p className="noEventorLoading">Loading Debts...</p>}
+        {loading && <p className="nothingorLoading">Loading Debts...</p>}
       </div>
     );
   } else if (Ydebts.length === 0) {
     return (
-      <div className="nothingorLoading"> Great job! You don't owe anyone any debt. </div>
+      <div className="nothingorLoading"> You cleared all outstanding debts. </div>
     );
   } else { // render user events
 

@@ -4,20 +4,31 @@ import { withFirebase } from '../Firebase';
 import YourDebt from './yourDebtList';
 import TheirDebt from './theirDebtList';
 
+function isMobileDevice() {
+    if(window.innerWidth <= 800 && window.innerHeight <= 600) {
+      return true;
+    } else {
+      return false;
+    }
+ }
 
-// REMEMBER TO USE BORDER + PADDING to make vertical divider - using CSS
 const Payment = ({ authUser }) => {
     return (
-        <div className="contentRootDiv">
-            <div className="yourDebt">
+        <div className="paymentRootDiv">
+            <div className="debt">
                 <YourDebt authUser={authUser}/>
             </div>
-            <div className="theirDebt">
+
+            { !isMobileDevice() ? 
+            <div className="debt leftBorder">
                 <TheirDebt authUser={authUser}/>
             </div>
+            : 
+            <div className="debt topBorder">
+                <TheirDebt authUser={authUser}/>
+            </div>
+            }
         </div>
     )
 }
 export default withFirebase(Payment);
-
-//export { YourDebt, TheirDebt };
