@@ -1,8 +1,13 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
+import PropTypes from 'prop-types';
 
 import Payment from "../IOU";
-//import { YourDebt, TheirDebt } from '../IOU';
 import CalendarRoot from '../Calendar';
+import { AuthUserContext, withAuthorization } from '../Session';
+import LogoutButton from '../Logout';
+import { UserEventsList, CreateEventForm } from '../Events';
+import { withFirebase } from '../Firebase';
+import ContactList from "../Contacts/contactList";
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -18,6 +23,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 
 import { Badge } from "@material-ui/core";
 
@@ -27,20 +36,6 @@ import CalendarIcon from "@material-ui/icons/CalendarToday";
 import ContactIcon from "@material-ui/icons/Contacts";
 import InspirationIcon from "@material-ui/icons/Whatshot";
 import MoneyIcon from "@material-ui/icons/Money";
-
-import PropTypes from 'prop-types';
-
-import { AuthUserContext, withAuthorization } from '../Session';
-import LogoutButton from '../Logout';
-import { UserEventsList, CreateEventForm } from '../Events';
-import { withFirebase } from '../Firebase';
-import ContactList from "../Contacts/contactList";
-
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 /* 1st AppBar */
@@ -96,6 +91,19 @@ const StyledMenuItem = withStyles(theme => ({
 
 const Profile = ({ authUser, firebase }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [numOfNotifications, setNumOfNotifications] = React.useState(0);
+
+  useEffect(() => {
+    firebase.db.ref(`users/${authUser.uid}/invites`)
+      .on('value', snapshot => {
+        setNumOfNotifications(snapshot.numChildren());
+      });
+
+    // Clean up subscription when component unmounts
+    return () => {
+      firebase.db.ref(`users/${authUser.uid}/invites`).off()
+    };
+  }, [authUser, firebase, numOfNotifications]);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -111,10 +119,15 @@ const Profile = ({ authUser, firebase }) => {
         <Toolbar>
         <Typography className="profileDetails">
 
-          <Badge color="primary" badgeContent={4} className="profileBadge">
+          <Badge color="primary" badgeContent={numOfNotifications} className="profileBadge">
             <IconButton  onClick={handleClick} className="profileHiddenButton">
               <Avatar  className="profileAvatar">
-                {authUser.displayName[0]}
+                {/*authUser.photoURL ? 
+                  <img src={authUser.photoURL} className="profilePicture" alt="" /> :
+                  authUser.displayName[0]*/
+                }
+                {console.log(authUser.photoURL)}
+                {<img src={authUser.photoURL} className="profilePicture" alt="" /> }
               </Avatar>
             </IconButton>
           </Badge>
@@ -153,15 +166,17 @@ class Notifications extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ loading: true });
     this.props.firebase.db.ref(`users/${this.props.authUser.uid}/invites`)
-      .once('value', snapshot => {
+      .on('value', snapshot => {
         if (snapshot.val()) {
           const invites = Object.values(snapshot.val());
           this.setState({ invites: invites });
         }
-        this.setState({ loading: false });
       });
+  }
+
+  componentWillUnmount() {
+    this.props.firebase.db.ref(`users/${this.props.authUser.uid}/invites`).off();
   }
 
   handleDecision = (eventData, accept) => {

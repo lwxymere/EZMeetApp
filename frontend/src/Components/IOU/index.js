@@ -1,5 +1,4 @@
 import React from 'react';
-import { withFirebase } from '../Firebase';
 
 import YourDebt from './yourDebtList';
 import TheirDebt from './theirDebtList';
@@ -31,4 +30,5 @@ const Payment = ({ authUser }) => {
         </div>
     )
 }
-export default withFirebase(Payment);
+
+export default Payment;

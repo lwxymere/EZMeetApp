@@ -46,7 +46,7 @@ class CreateEventForm extends Component {
       this.setState({ timeError: "Pls review your Start and End Time." });
       return;
     }
-    // get unique event id
+    // generate unique event id
     var newEventKey = this.props.firebase.db.ref().child("events").push().key;
 
     var eventData = {
@@ -58,9 +58,7 @@ class CreateEventForm extends Component {
       location: this.state.location,
       details: this.state.details,
       attendees: { [authUser.uid]: authUser.displayName },
-      IOU: [],
     };
-
 
     // Write new event data to user and event nodes in database
     var updates = {};
@@ -198,6 +196,7 @@ class CreateEventForm extends Component {
 }
 
 // Consider using a Dialog or sth to give the delete confirmation message
+// DeleteEventButton is only rendered for the event owner, to delete the event
 const DeleteEventButton = ({ eventData, firebase }) => (
   <Tooltip title="Delete Event" placement="top">
     <Button
@@ -221,9 +220,33 @@ const DeleteEventButton = ({ eventData, firebase }) => (
               firebase.db.ref().update(updates)
               .then(() => window.location.reload()) // refresh page on delete
               .catch(error => console.log(error));
-          })
-      }
-    }}> <DeleteIcon /> </Button>
+            })
+        }
+      }}> <DeleteIcon /> </Button>
+  </Tooltip>
+);
+
+// DeclineEventButton is rendered for all event attendees who are not the event owner,
+// in place of the DeleteEventButton
+const DeclineEventButton = ({ eventData, firebase, authUser }) => (
+  <Tooltip title="Decline Event" placement="top">
+    <Button
+      className="deleteButton"
+      onClick={() => {
+        const msg = "Are you sure you wish to decline this event?"
+        if (window.confirm(msg)) {
+          var updates = {};
+          // delete event from user's event list
+          updates[`users/${authUser.uid}/events/${eventData.id}`] = null;
+          // remove user from event attendees
+          updates[`events/${eventData.id}/attendees/${authUser.uid}`] = null;
+
+          firebase.db.ref().update(updates)
+            .then(() => window.location.reload())
+            .catch(error => console.log(error));
+        }
+      }}
+    > Decline </Button>
   </Tooltip>
 );
 
@@ -402,9 +425,13 @@ class CreateDebtForm extends Component {
     }
     if (this.state.payees === undefined || this.state.payees[this.state.author.uid] === undefined) {
       var temp = []
-      for (let ppl in this.state.payeeIDs) {
-        temp[this.state.payeeIDs[ppl]] = '$'; 
+      for (let id in this.state.payeeIDs) {
+        console.log(id);
+        if (id !== this.props.authUser.uid) { // dont allow user to send a debt to self
+          temp[this.state.payeeIDs[id]] = '$'; 
+        }
       }
+      // want eventName, startTime, and location
       temp['eventDetail'] = { 
         name: this.state.author.displayName,
         eventName: this.state.eventName,
@@ -412,13 +439,12 @@ class CreateDebtForm extends Component {
       }
       this.state.payees = temp;
     } else {
-      this.state.payees =  this.state.payees[this.state.author.uid];
+      this.state.payees = this.state.payees[this.state.author.uid];
     }
   }
   
   handleSubmit = () => {
     console.log(this.state.payees);
-
     
     var updates = {};
     updates[`/events/${this.state.eventID}/IOU/${this.state.author.uid}`] = this.state.payees;
@@ -434,8 +460,10 @@ class CreateDebtForm extends Component {
     }
   
   handleChange = event => {
-    var insidePayees = { ...this.state.payees,
-    [event.target.name] : event.target.value };
+    var insidePayees = { 
+      ...this.state.payees,
+      [event.target.name] : event.target.value
+    };
     this.setState({ payees: insidePayees });
   }
 
@@ -457,7 +485,7 @@ class CreateDebtForm extends Component {
             name= {this.state.payeeIDs[ppl]}
             type="text"
             label="Debt Amount"
-            placeholder=" $ $ $ "
+            placeholder="Amount Owed"
             required={true}
             value={ this.state.payees[this.state.payeeIDs[ppl]] }
             onChange={this.handleChange}
@@ -548,8 +576,13 @@ class InviteDialogButton extends Component {
     );
   }
 }
-  
 
-
-export { DeleteEventButton, EditEventButton, CreateEventForm, CreateDebtForm, InviteDialogButton };
+export { 
+  DeleteEventButton, 
+  DeclineEventButton, 
+  EditEventButton, 
+  CreateEventForm, 
+  CreateDebtForm, 
+  InviteDialogButton 
+};
 

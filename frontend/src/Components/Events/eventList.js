@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider'
 
 import { withFirebase } from '../Firebase';
-import { DeleteEventButton, EditEventButton, InviteDialogButton, CreateDebtForm } from './createEvent';
+import { DeleteEventButton, DeclineEventButton, EditEventButton, InviteDialogButton, CreateDebtForm } from './createEvent';
 
 class UserEventsList extends React.Component {
   constructor(props) {
@@ -112,7 +112,10 @@ const EventList = ({ firebase, events, loading, authUser }) => {
                 <InviteDialogButton authUser={authUser} eventData={event} />
                 <CreateDebtForm authUser={authUser} firebase={firebase} eventData={event} />
                 <EditEventButton firebase={firebase} eventData={event} />
-                <DeleteEventButton firebase={firebase} eventData={event} />
+                {event.owner === authUser.uid ? 
+                  <DeleteEventButton firebase={firebase} eventData={event} /> :
+                  <DeclineEventButton firebase={firebase} eventData={event} authUser={authUser} />
+                }
               </div> 
 
               <Divider />
@@ -132,7 +135,6 @@ const EventList = ({ firebase, events, loading, authUser }) => {
                 </Typography>
               
               
-              
                 { /* I want to change this to some form of expansion panel but its so ugly so idk :/ */}
                 <Typography className="eventContentText" variant="body2" component="p">
                   Attendees : 
@@ -146,8 +148,6 @@ const EventList = ({ firebase, events, loading, authUser }) => {
                   </ol>
                 </Typography>
               </div>
-
-
 
             </CardContent>
           </Card>
