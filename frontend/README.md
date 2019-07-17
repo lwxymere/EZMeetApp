@@ -22,6 +22,8 @@ Please update when you install new things.
 
 `npm install --save react-big-calendar`
 
+`npm install moment`
+
 
 
 ________________________________________________

@@ -274,7 +274,17 @@ blueblue tabs */
 .rbc-row-segment{
   font-size: 0.6em;
 }
-
+.rbc-event {
+  background-color: lightgreen;
+  border: 1px black solid;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+.rbc-event.rbc-selected {
+  background-color: yellow;
+}
 
 /** ----------------- Contact Tab ------------- **/
 .addContact {

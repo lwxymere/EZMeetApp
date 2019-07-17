@@ -2,21 +2,14 @@ import React, { Component } from "react";
 import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal } from "@material-ui/core";
-
 
 const localizer = momentLocalizer(moment);
 
-/*--------------------
-Need to propogate events from Google or simply firebase (TBD)
-Google - will require backend to pull out data from their Google API. 
-         will also require them to log in/authorize a second time to allow
-         their calendar events to be given
-Firebase - simply extract from firebase will do
-
-Either way, once obtained the events, put into format as below and put into another
-file along this directory and import here to be placed.
-*/
+/**
+ * Potential update/upgrade could be 
+ * 1. Making a popup/Modal when a current event is clicked to display its information.
+ * 2. Obtaining event from Google Calendar.
+ */
 
 class EventsCalendar extends Component {
   constructor(props) {
@@ -24,7 +17,7 @@ class EventsCalendar extends Component {
     this.state = {
       events: [],
       loading: false,
-      showModal: false,
+      isEditModalOpen: false,
       currentEvent: [],
     };
   }
@@ -70,6 +63,15 @@ class EventsCalendar extends Component {
       });
   };
 
+  toggleEditModal = event => {    
+    if (!this.state.isAddModalOpen) {
+      this.setState({
+        currentEvent: event,
+        isEditModalOpen: !this.state.isEditModalOpen,
+      });
+    }
+  };
+
   render() {
     const { events, loading } = this.state;
     
@@ -81,24 +83,25 @@ class EventsCalendar extends Component {
       );
     } else {
       return (
-          <Calendar
-            className="calendar"
-            startAccessor="startTime"
-            endAccessor="endTime"
-            titleAccessor='eventName'
-            tooltipAccessor='details'
-      
-            popup
-            selectable
-            //onShowMore={(events, date) => this.setState({showModal: true, events})}
-            views={['month', 'day', 'agenda']}
-            localizer={localizer}
-            events={events}
-            onSelectEvent={event => console.log(event)}
+        <Calendar
+          className="calendar"
+          startAccessor="startTime"
+          endAccessor="endTime"
+          titleAccessor='eventName'
+          tooltipAccessor='details'
+    
+          popup
+          //onShowMore={(events, date) => this.setState({showModal: true, events})}
+          views={['month', 'day', 'agenda']}
+          localizer={localizer}
+          events={events}
+          //onSelectEvent={event => console.log(event)}
+          onSelectEvent={event => alert(`Details: ${event.details} Location: ${event.location}`)}
           />
       );
     }
   }
 } 
+
 
 export default EventsCalendar;
