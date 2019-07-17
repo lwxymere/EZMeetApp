@@ -160,7 +160,7 @@ const TDebts = ({ firebase, Tdebts, loading, eventsDetails, authUser }) => {
 const DeleteDebtButton = ({ eventID, authUser, firebase, eventsDetails }) => (
   <Tooltip title="Settled" placement="top">
     <Button
-      className="deleteButton"
+      className="resolvedButton"
       onClick={() => {
         const msg = "Repaid?";
 

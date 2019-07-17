@@ -217,6 +217,11 @@ blueblue tabs */
   padding-bottom: 4%;
 }
 .deleteButton {
+  padding: 12px !important;
+  min-width: 30px !important;
+  border-radius: 50% !important;
+}
+.resolvedButton {
   padding: 0 !important;
   padding-bottom: 2px !important;
   min-width: 30px !important;
@@ -327,13 +332,16 @@ blueblue tabs */
   display: flex;
   justify-content: space-around;  
   padding: 4%;
+  flex-wrap: wrap;
 }
 .theirPayment{
   padding: 10px;
+  margin: 1%;
   border: solid lightblue;
 }
 .yourPayment{
   padding: 10px;
+  margin: 1%;
   border: solid red;
 }
 .paymentTitle{

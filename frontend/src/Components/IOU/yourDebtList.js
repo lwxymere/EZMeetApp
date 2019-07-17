@@ -187,7 +187,7 @@ const YDebts = ({ firebase, Ydebts, loading, userIDs, authUser, eventsDetails })
 const DeleteDebtButton = ({ eventID, authUser, userID, firebase, eventsDetails, num }) => (
   <Tooltip title="Settled" placement="top">
     <Button
-      className="deleteButton"
+      className="resolvedButton"
       onClick={() => {
         const msg = "Repaid?";
 

@@ -16,6 +16,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import MoneyAttachIcon from "@material-ui/icons/AttachMoney"
 import EditIcon from '@material-ui/icons/Edit';
 import InviteIcon from '@material-ui/icons/PersonAdd';
+import ClearIcon from '@material-ui/icons/Clear'
 
 import DateFnsUtils from '@date-io/date-fns';
 import {  MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -246,7 +247,7 @@ const DeclineEventButton = ({ eventData, firebase, authUser }) => (
             .catch(error => console.log(error));
         }
       }}
-    > Decline </Button>
+    > <ClearIcon /> </Button>
   </Tooltip>
 );
 
