@@ -11,6 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton'
 import Grid from '@material-ui/core/Grid';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoneyAttachIcon from "@material-ui/icons/AttachMoney"
@@ -415,57 +416,58 @@ class CreateDebtForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      author: this.props.authUser,
-      eventID: this.props.eventData.id,
-      payeeIDs: this.props.eventData.attendees,
-      owner: this.props.eventData.owner,
-      payees: this.props.eventData.IOU,
-      eventName: this.props.eventData.eventName,
+      debtList: {},
       open: false,
       error: null,
-    }
-    if (this.state.payees === undefined || this.state.payees[this.state.author.uid] === undefined) {
-      var temp = []
-      for (let id in this.state.payeeIDs) {
-        console.log(id);
-        if (id !== this.props.authUser.uid) { // dont allow user to send a debt to self
-          temp[this.state.payeeIDs[id]] = '$'; 
-        }
-      }
-      // want eventName, startTime, and location
-      temp['eventDetail'] = { 
-        name: this.state.author.displayName,
-        eventName: this.state.eventName,
-        eventID: this.state.eventID,
-      }
-      this.state.payees = temp;
-    } else {
-      this.state.payees = this.state.payees[this.state.author.uid];
     }
   }
   
   handleSubmit = () => {
-    console.log(this.state.payees);
-    
+    var eventData = this.props.eventData;
     var updates = {};
-    updates[`/events/${this.state.eventID}/IOU/${this.state.author.uid}`] = this.state.payees;
+
+    for (let id in this.props.eventData.attendees) { // id is the contact's id
+      let name = this.props.eventData.attendees[id];
+      let date = (new Date(eventData.startTime)).toDateString();
+
+      // skip updates if debt field is left blank for a certain friend
+      // skip the user himself
+      if (!(name in this.state.debtList) || id === this.props.authUser.uid) continue;
+
+      // store theirDebt info in the creator's profile
+      updates[`users/${this.props.authUser.uid}/IOU/theirDebt/${id}/${eventData.id}`] = {
+        debtID: eventData.id,
+        uid: id,
+        name: name,
+        amount: this.state.debtList[name],
+        details: `${eventData.eventName} at ${eventData.location} on ${date}`,
+      };
+
+      // store myDebt info in the receiver's profile
+      updates[`users/${id}/IOU/myDebt/${this.props.authUser.uid}/${eventData.id}`] = {
+        debtID: eventData.id,
+        uid: this.props.authUser.uid,
+        name: this.props.authUser.displayName,
+        amount: this.state.debtList[name],
+        details: `${eventData.eventName} at ${eventData.location} on ${date}`,
+      };
+    }
 
     this.props.firebase.db.ref().update(updates)
       .then(() => {
-        //window.location.reload();
         this.handleClose();
       })
       .catch(error => {
         this.setState({ error });
       });
-    }
+  }
   
   handleChange = event => {
-    var insidePayees = { 
-      ...this.state.payees,
+    var updatedDebtList = { 
+      ...this.state.debtList,
       [event.target.name] : event.target.value
     };
-    this.setState({ payees: insidePayees });
+    this.setState({ debtList: updatedDebtList });
   }
 
   handleClose = () => {
@@ -478,26 +480,34 @@ class CreateDebtForm extends Component {
 
   render() {
     let createForm = [];
-    for (let ppl in this.state.payeeIDs) {
-      createForm.push( <div> { this.state.payeeIDs[ppl] } </div> )
+    let attendees = this.props.eventData.attendees;
+    for (let id in attendees) {
+      // skip the user himself
+      if (id === this.props.authUser.uid) continue;
+
       createForm.push(
-        <form>
-          <TextField
-            name= {this.state.payeeIDs[ppl]}
-            type="text"
-            label="Debt Amount"
-            placeholder="Amount Owed"
-            required={true}
-            value={ this.state.payees[this.state.payeeIDs[ppl]] }
-            onChange={this.handleChange}
-          />
-        </form>
+        <Fragment key={id}>
+          <div> {attendees[id]} </div>
+          <form>
+            <TextField
+              name={attendees[id]}
+              id={id}
+              type="text"
+              label="Debt Amount"
+              placeholder="Amount Owed"
+              required={true}
+              value={this.state.debtList[attendees[id]]}
+              onChange={this.handleChange}
+              InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+            />
+          </form>
+        </Fragment>
       );
     }
  
     return (
       <Fragment>
-        <Tooltip title="Create Debt" placement="top">
+        <Tooltip title="Create / Update Debt" placement="top">
           <IconButton onClick={this.handleOpen}>
             <MoneyAttachIcon />
           </IconButton>

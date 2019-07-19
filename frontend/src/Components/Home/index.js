@@ -122,11 +122,6 @@ const Profile = ({ authUser, firebase }) => {
           <Badge color="primary" badgeContent={numOfNotifications} className="profileBadge">
             <IconButton  onClick={handleClick} className="profileHiddenButton">
               <Avatar  className="profileAvatar">
-                {/*authUser.photoURL ? 
-                  <img src={authUser.photoURL} className="profilePicture" alt="" /> :
-                  authUser.displayName[0]*/
-                }
-                {console.log(authUser.photoURL)}
                 {<img src={authUser.photoURL} className="profilePicture" alt="" /> }
               </Avatar>
             </IconButton>
@@ -299,51 +294,98 @@ function LinkTab(props) {
   );
 }
 
-const HomeNavBar = ({ authUser, firebase }) => {
-  const [value, setValue] = React.useState(0);
-
-  function handleChange(event, newValue) {
-    setValue(newValue);
+class HomeNavBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 0,
+      theirDebt: {},
+      yourDebt: {},
+      IOUCount: 0,
+      loading: false,
+    };
   }
 
-  return (
-     <div className="tabRootDiv">
-      <AppBar position="static">
-        <Tabs variant="fullWidth" value={value} onChange={handleChange}>
-          <Tooltip title="Event" placement="bottom">
-            <LinkTab 
-              label={        
-                <Badge color="secondary" 
-                badgeContent={5} 
-                className="homenavbarBadge"
-                href="/events" 
-                >
-                <EventIcon />
-                </Badge>
-              }
-            />
-          </Tooltip>
-          <Tooltip title="Calendar" placement="bottom">
-            <LinkTab icon={<CalendarIcon />} href="/calendar" />
-          </Tooltip>
-          <Tooltip title="Contact" placement="bottom">
-            <LinkTab icon={<ContactIcon />} href="/contact" />
-          </Tooltip>
-          <Tooltip title="Inspirations" placement="bottom">
-            <LinkTab icon={<InspirationIcon />} href="/noidea" />
-          </Tooltip>
-          <Tooltip title="IOU" placement="bottom">
-            <LinkTab icon={<MoneyIcon />} href="/iou" />
-          </Tooltip>
-        </Tabs>
-      </AppBar>
-      {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase}/> </TabContainer>}
-      {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase}/> </TabContainer>}
-      {value === 2 && <TabContainer> <ContactList authUser={authUser} /> </TabContainer> }
-      {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
-      { value === 4 && <TabContainer> <Payment authUser={authUser}/> </TabContainer> }
-    </div>
-  );
+  handleTabClick = (event, newValue) => {
+    this.setState({ value: newValue });
+  }
+
+  componentDidMount() {
+    this.setState({ loading: true });
+    this.props.firebase.db.ref(`users/${this.props.authUser.uid}/IOU`)
+      .on('value', snapshot => {
+        if (!snapshot.val()) return; // no IOUs
+
+        // for notification number on the blue tab
+        var IOUCount = snapshot.child('theirDebt').numChildren() + snapshot.child('myDebt').numChildren();
+
+        this.setState({
+          theirDebt: snapshot.child('theirDebt').val(),
+          yourDebt: snapshot.child('myDebt').val(),
+          IOUCount: IOUCount,
+          loading: false,
+        })
+      })
+  }
+
+  componentWillUnmount() {
+    this.props.firebase.db.ref(`users/${this.props.authUser.uid}/IOU`).off();
+  }
+
+  render() {
+    const { value, theirDebt, yourDebt, IOUCount, loading } = this.state;
+    const firebase = this.props.firebase;
+    const authUser = this.props.authUser;
+
+    return (
+      <div className="tabRootDiv">
+        <AppBar position="static">
+          <Tabs variant="fullWidth" value={value} onChange={this.handleTabClick}>
+            <Tooltip title="Event" placement="bottom">
+              <LinkTab icon={<EventIcon />} href="/events" />
+            </Tooltip>
+            <Tooltip title="Calendar" placement="bottom">
+              <LinkTab icon={<CalendarIcon />} href="/calendar" />
+            </Tooltip>
+            <Tooltip title="Contact" placement="bottom">
+              <LinkTab icon={<ContactIcon />} href="/contact" />
+            </Tooltip>
+            <Tooltip title="Suggest An Event" placement="bottom">
+              <LinkTab icon={<InspirationIcon />} href="/noidea" />
+            </Tooltip>
+            <Tooltip title="IOU" placement="bottom">
+              <LinkTab 
+                label={
+                  <Badge color="secondary"
+                    badgeContent={IOUCount}
+                    className="homenavbarBadge"
+                    href="/payments"
+                  >
+                    <MoneyIcon />
+                  </Badge>
+                }
+              />
+            </Tooltip>
+          </Tabs>
+        </AppBar>
+        {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase} /> </TabContainer>}
+        {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase} /> </TabContainer>}
+        {value === 2 && <TabContainer> <ContactList authUser={authUser} firebase={firebase} /> </TabContainer>}
+        {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
+        {value === 4 && 
+          <TabContainer>
+            <Payment 
+              authUser={authUser} 
+              firebase={firebase}
+              theirDebt={theirDebt}
+              yourDebt={yourDebt}
+              loading={loading}
+            /> 
+          </TabContainer>
+        }
+      </div>
+    );
+  }
 }
 
 const HomePage = ({ firebase }) => {

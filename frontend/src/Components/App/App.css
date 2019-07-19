@@ -193,11 +193,13 @@ blueblue tabs */
   padding: 0 !important;
   height: 100% !important;
 }
-/*
+
 .contentRootDiv {
+  height: 100%;
 }
 .contentcss {
-}*/
+  height: 100%;
+}
 .tabRootDiv{
   height: 100%;
 }
@@ -354,3 +356,8 @@ blueblue tabs */
   display: flex;
   justify-content: space-between;
 }
+.debtBreakdown {
+  display: flex;
+  flex-direction: column;
+}
+/* YDebts and TDebts have className="Debts" but theres no .Debts css here */

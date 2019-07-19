@@ -7,157 +7,106 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from "@material-ui/icons/Done";
 
-import { withFirebase } from '../Firebase';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-class TheirDebt extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      Tdebts: [],
-      loading: false,
-      eventsDetails: [],
-      eventIDs: [],
-    };
-  }
-
-  componentDidMount() {
-    this.setState({ loading: true });
-    this.getTdebt();
-  }
-
-
-  getTdebt() {
-    var promises = [];
-    this.getEventIDs().then(data => {
-      //console.log(this.state.eventIDs);
-      //this.state.eventIDs.forEach(id => {
-      for (let id of this.state.eventIDs) { 
-        //console.log(id);
-        const promise = this.props.firebase.db
-          .ref(`events/${id}/IOU`)
-          .once('value');
-        promises.push(promise);
-      };
-      // ensure all API calls are completed before proceeding
-      return Promise.all(promises);
-    }).then(snapshots => {
-      var Tdebts = [];
-      snapshots.forEach(snapshot => {
-        var eventDetails = snapshot.child(`${this.props.authUser.uid}`).val();
-        //console.log(eventDetails);
-        if (eventDetails) {
-          if (eventDetails.eventDetail !== undefined) {
-            var temp=this.state.eventsDetails;
-            temp.push(eventDetails.eventDetail);
-            //console.log(temp);
-            this.setState ({ eventsDetails: temp });
-            delete eventDetails.eventDetail;
-          }
-          Tdebts.push(eventDetails);
-        }
-      });
-      this.setState({ Tdebts: Tdebts, loading: false });
-    });
-  }
-
-  getEventIDs() {
-    return this.props.firebase.db
-      .ref(`users/${this.props.authUser.uid}/events`)
-      .once('value', snapshot => {
-        if (snapshot.val()) {
-        const eventIDs = Object.keys(snapshot.val()).map(key => key);
-        this.setState({ eventIDs: eventIDs });
-        }
-      })
-      .catch(error => {
-        this.setState({ error });
-      });
-    }
+const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
   
-  /*
-  componentWillUnmount() {
-    this.props.firebase.db
-      .ref(`users/${this.props.authUser.uid}/contacts`)
-      .off();
-  }*/
+  var debts = [];
+  // each loop iteration gives all the debts for a single friendID
+  for (let friendID in theirDebt) {
+    var debtList = Object.values(theirDebt[friendID]); // array of debt objects
+    var totalDebt = 0;
+    var currentFriendsDebts = [];
 
-  render() {
-    const { Tdebts, loading, eventsDetails } = this.state;
+    for (let debt of debtList) {
+      totalDebt += +debt.amount; // + is a unary operator to convert string to int
+      currentFriendsDebts.push(debt);
+    }
 
-    return (
-      <div className="contentRootDiv">
-        <Paper className="contentcss">
+    debts.push({
+      total: totalDebt,
+      name: debtList[0].name,
+      breakdown: currentFriendsDebts,
+    })
+  }
+
+  return (
+    <div className="contentRootDiv">
+      <Paper className="contentcss">
         <Typography component="div" className="paymentPaper">
           <Box className="contentTitle" fontSize="h4.fontSize">
             Their Debt
           </Box>
-          <TDebts 
-            firebase={this.props.firebase} 
-            authUser={this.props.authUser}
-            Tdebts={Tdebts} 
-            eventsDetails={eventsDetails}
+          <TDebts
+            className="Debts"
+            firebase={firebase}
+            authUser={authUser}
+            allDebts={debts}
             loading={loading}
           />
         </Typography>
-        </Paper>
-      </div>
-    );
-  }
+      </Paper>
+    </div>
+  );
 }
 
-const TDebts = ({ firebase, Tdebts, loading, eventsDetails, authUser }) => {
+const TDebts = ({ firebase, allDebts, loading, authUser }) => {
   if (loading) { // loading from database
     return (
       <div>
         {loading && <p className="nothingorLoading">Loading Debts...</p>}
       </div>
     );
-  } else if (Tdebts.length === 0) {
+  } else if (allDebts.length === 0) {
     return ( 
       <div className="nothingorLoading"> All debts are cleared by others. </div>
     )
-  } else { // render user events
-
-    var allPayments = [];
-    for (let num in Tdebts) {
-      var eachPayment = [];
-      //if (num !== '0') { 
-        //alert(num);
-        //list.push( <Divider /> )};
-
-      console.log(Tdebts[num]);
-      console.log(eventsDetails[num]);
-      eachPayment.push(
-        <div className="paymentTitle"> Event: {eventsDetails[num].eventName} </div> 
-      )
-      for (let name in Tdebts[num]) {
-        console.log(name);
-        eachPayment.push(
-          <div className="paymentContent"> 
-          <div className="paymentContent"> { name }: {Tdebts[num][name]} </div> 
-          
-          <DeleteDebtButton
-          eventID = {eventsDetails[num].eventID}
-          authUser={authUser}
-          firebase={firebase}
-          eventsDetails={name}/>
-          </div>
-        )
-      }
-      allPayments.push(
-        <div className="theirPayment"> { eachPayment } </div>
-      )
-    }
+  } else { // render friend's debts
 
     return (
       <div className="allPayment">
-        { allPayments }
+      {allDebts.map(friendDebts => (
+        <div className="theirPayment" key={friendDebts.breakdown[0].uid}>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={
+                <Tooltip title="View Breakdown" placement="top">
+                  <ExpandMoreIcon />
+                </Tooltip> 
+              }
+              aria-controls="panel1c-content"
+              id="panel1c-header"
+            >
+              <div className="paymentContent">
+                <Typography>{friendDebts.name}: ${friendDebts.total}</Typography>
+              </div>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails className="debtBreakdown">
+              {friendDebts.breakdown.map(debt => (
+                <div className="paymentContent" key={debt.debtID}>
+                  <Typography variant="body2" component="div">
+                    {debt.details} - ${debt.amount}
+                  </Typography>
+                  <DeleteDebtButton
+                    authUser={authUser}
+                    firebase={firebase}
+                    debtDetails={debt}
+                  />
+                </div>
+              ))}
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </div>
+      ))}
       </div>
-    );
+    )
   }
 };
 
-const DeleteDebtButton = ({ eventID, authUser, firebase, eventsDetails }) => (
+const DeleteDebtButton = ({ authUser, firebase, debtDetails }) => (
   <Tooltip title="Settled" placement="top">
     <Button
       className="resolvedButton"
@@ -165,28 +114,18 @@ const DeleteDebtButton = ({ eventID, authUser, firebase, eventsDetails }) => (
         const msg = "Repaid?";
 
         if (window.confirm(msg)) {
-          var size = 5;
-          firebase.db.ref(`events/${eventID}/IOU/${authUser.uid}`).once('value')
-          .then(snapshot => {
-            console.log(snapshot.val());
-            size = Object.keys(snapshot.val()).length;
-            console.log(size);
+          var updates = {};
+          // delete debt for self
+          updates[`users/${authUser.uid}/IOU/theirDebt/${debtDetails.uid}/${debtDetails.debtID}`] = null;
+          // delete debt for friend
+          updates[`users/${debtDetails.uid}/IOU/myDebt/${authUser.uid}/${debtDetails.debtID}`] = null;
 
-            var updates = {};
-            if (size === 2) {
-              updates[`events/${eventID}/IOU/${authUser.uid}`] = null;
-            } else {
-              updates[`events/${eventID}/IOU/${authUser.uid}/${eventsDetails}`] = null;
-            }
-            firebase.db.ref().update(updates)
+          firebase.db.ref().update(updates)
             .catch(error => console.log(error));
-          });
-
         }
       }
       }> <DeleteIcon /> </Button>
   </Tooltip>
 );
 
-
-export default withFirebase(TheirDebt);
+export default TheirDebt;
