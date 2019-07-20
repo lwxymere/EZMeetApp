@@ -239,7 +239,7 @@ blueblue tabs */
   justify-content: center;
   margin: 5px;
   width: 275px;
-  /*This is to create the border color which is apparently illegal */
+  /*This is to create the border color */
   padding: 5px;
   float: left;
   box-shadow: inset 0 0 0 5px rgb(238, 238, 238) !important;
@@ -275,7 +275,6 @@ blueblue tabs */
 }
 
 /** ----------------- Calendar --------------- **/
-/* The calendar is not mobile friendly eh */
 .calendar{
   height: 75%;
   padding: 3%;
@@ -364,4 +363,3 @@ blueblue tabs */
   text-align: start;
   word-break: break-word;
 }
-/* YDebts and TDebts have className="Debts" but theres no .Debts css here */

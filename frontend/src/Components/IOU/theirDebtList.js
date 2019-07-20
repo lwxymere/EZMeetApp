@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React from 'react';
 
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
@@ -12,7 +12,6 @@ import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
 import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Divider } from '@material-ui/core';
 
 const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
   
