@@ -56,8 +56,7 @@ const TitleBar = () => {
 };
 
 /* 2nd AppBar below */
-/* This is the menu part that appears when click on Avatar 
-This is inline styling to some extent, will move to css when theres time */
+/* This is the menu part that appears when click on Avatar */
 const StyledMenu = withStyles({
   paper: {
     border: '1px solid #d3d4d5',
@@ -270,7 +269,6 @@ class Notifications extends React.Component {
 }
 
 /* For the Blue Tabs */
-/* I'll clean up this inline styling too when there's more time */
 function TabContainer(props) {
   return (
     <Typography component="div" className="tabcontentDiv">
