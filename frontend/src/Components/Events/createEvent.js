@@ -516,21 +516,21 @@ class CreateDebtForm extends Component {
           open={this.state.open}
           onClose={this.handleClose}
           fullWidth
-          maxWidth="sm">
-          <DialogTitle>Create Debts</DialogTitle>
-          
-          <DialogContent>
-            <div> {createForm} </div>
-          </DialogContent>
-          
-          <DialogActions>
-            <Button onClick={this.handleClose}>
-              Cancel
-            </Button>
-            <Button onClick={this.handleSubmit}>
-              Save
-            </Button>
-          </DialogActions>
+          maxWidth="xs">
+            <DialogTitle>Create Debts</DialogTitle>
+            
+            <DialogContent  className='debtAttendees'>
+              <div> {createForm} </div>
+            </DialogContent>
+            
+            <DialogActions>
+              <Button onClick={this.handleClose}>
+                Cancel
+              </Button>
+              <Button onClick={this.handleSubmit}>
+                Save
+              </Button>
+            </DialogActions>
         </Dialog>
       </Fragment>
     );

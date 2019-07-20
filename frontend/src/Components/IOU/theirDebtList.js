@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
@@ -7,10 +7,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from "@material-ui/icons/Done";
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import { withStyles } from '@material-ui/core/styles';
+import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
+import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Divider } from '@material-ui/core';
 
 const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
   
@@ -41,7 +43,6 @@ const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
             Their Debt
           </Box>
           <TDebts
-            className="Debts"
             firebase={firebase}
             authUser={authUser}
             allDebts={debts}
@@ -52,6 +53,47 @@ const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
     </div>
   );
 }
+
+const ExpansionPanel = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+  },
+  expanded: {},
+})(MuiExpansionPanel);
+
+const ExpansionPanelSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(0, 0, 255, .25)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    minHeight: 56,
+    '&$expanded': {
+      minHeight: 56,
+    },
+  },
+  content: {
+    '&$expanded': {
+      margin: '12px 0',
+    },
+  },
+  expanded: {},
+})(MuiExpansionPanelSummary);
+
+const ExpansionPanelDetails = withStyles(theme => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiExpansionPanelDetails);
 
 const TDebts = ({ firebase, allDebts, loading, authUser }) => {
   if (loading) { // loading from database
@@ -69,7 +111,7 @@ const TDebts = ({ firebase, allDebts, loading, authUser }) => {
     return (
       <div className="allPayment">
       {allDebts.map(friendDebts => (
-        <div className="theirPayment" key={friendDebts.breakdown[0].uid}>
+        <div className="payment" key={friendDebts.breakdown[0].uid}>
           <ExpansionPanel>
             <ExpansionPanelSummary
               expandIcon={
@@ -85,10 +127,11 @@ const TDebts = ({ firebase, allDebts, loading, authUser }) => {
               </div>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails className="debtBreakdown">
-              {friendDebts.breakdown.map(debt => (
+              
+              {friendDebts.breakdown.map(debt => (              
                 <div className="paymentContent" key={debt.debtID}>
-                  <Typography variant="body2" component="div">
-                    {debt.details} - ${debt.amount}
+                  <Typography variant="body2" component="div" className="debtDetails">
+                    •  {debt.details} - ${debt.amount}
                   </Typography>
                   <DeleteDebtButton
                     authUser={authUser}

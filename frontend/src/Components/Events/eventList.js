@@ -67,7 +67,7 @@ class UserEventsList extends React.Component {
 
     return (
       <div className="contentRootDiv">
-        <Paper className="contentcss">
+        <Paper className="eventcss">
         <Typography component="div">
           <Box className="contentTitle" fontSize="h4.fontSize">
             Upcoming Events

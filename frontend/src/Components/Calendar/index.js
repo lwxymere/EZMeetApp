@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { Paper } from "@material-ui/core";
 
 const localizer = momentLocalizer(moment);
 
@@ -83,6 +84,7 @@ class EventsCalendar extends Component {
       );
     } else {
       return (
+        <Paper className='contentcss'> 
         <Calendar
           className="calendar"
           startAccessor="startTime"
@@ -98,6 +100,7 @@ class EventsCalendar extends Component {
           //onSelectEvent={event => console.log(event)}
           onSelectEvent={event => alert(`Details: ${event.details} Location: ${event.location}`)}
           />
+        </Paper>
       );
     }
   }

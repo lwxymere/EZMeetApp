@@ -7,9 +7,10 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from "@material-ui/icons/Done";
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import { withStyles } from '@material-ui/core/styles';
+import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
+import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const YourDebt = ({ authUser, firebase, yourDebt, loading }) => {
@@ -41,7 +42,6 @@ const YourDebt = ({ authUser, firebase, yourDebt, loading }) => {
             My Debts
           </Box>
           <YDebts
-            className="Debts"
             firebase={firebase}
             authUser={authUser}
             allDebts={debts}
@@ -52,6 +52,47 @@ const YourDebt = ({ authUser, firebase, yourDebt, loading }) => {
     </div>
   );
 }
+
+const ExpansionPanel = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+  },
+  expanded: {},
+})(MuiExpansionPanel);
+
+const ExpansionPanelSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(255, 0, 0, .25)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    minHeight: 56,
+    '&$expanded': {
+      minHeight: 56,
+    },
+  },
+  content: {
+    '&$expanded': {
+      margin: '12px 0',
+    },
+  },
+  expanded: {},
+})(MuiExpansionPanelSummary);
+
+const ExpansionPanelDetails = withStyles(theme => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiExpansionPanelDetails);
 
 const YDebts = ({ firebase, authUser, allDebts, loading }) => {
   if (loading) { // loading from database
@@ -68,7 +109,7 @@ const YDebts = ({ firebase, authUser, allDebts, loading }) => {
     return (
       <div className="allPayment">
         {allDebts.map(friendDebts => (
-          <div className="yourPayment" key={friendDebts.breakdown[0].uid}>
+          <div className="payment" key={friendDebts.breakdown[0].uid}>
             <ExpansionPanel>
               <ExpansionPanelSummary
                 expandIcon={
@@ -86,8 +127,8 @@ const YDebts = ({ firebase, authUser, allDebts, loading }) => {
               <ExpansionPanelDetails className="debtBreakdown">
                 {friendDebts.breakdown.map(debt => (
                   <div className="paymentContent" key={debt.debtID}>
-                    <Typography variant="body2" component="div">
-                      {debt.details} - ${debt.amount}
+                    <Typography variant="body2" component="div" className="debtDetails">
+                      • {debt.details} - ${debt.amount}
                     </Typography>
                     <DeleteDebtButton
                       authUser={authUser}

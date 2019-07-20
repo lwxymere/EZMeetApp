@@ -372,16 +372,15 @@ class HomeNavBar extends React.Component {
         {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 2 && <TabContainer> <ContactList authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
-        {value === 4 && 
-          <TabContainer>
-            <Payment 
-              authUser={authUser} 
-              firebase={firebase}
-              theirDebt={theirDebt}
-              yourDebt={yourDebt}
-              loading={loading}
-            /> 
-          </TabContainer>
+        {value === 4 && <TabContainer>
+                          <Payment 
+                            authUser={authUser} 
+                            firebase={firebase}
+                            theirDebt={theirDebt}
+                            yourDebt={yourDebt}
+                            loading={loading}
+                          /> 
+                        </TabContainer> 
         }
       </div>
     );

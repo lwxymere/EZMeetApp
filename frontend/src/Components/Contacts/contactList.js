@@ -54,7 +54,7 @@ class ContactList extends React.Component {
 
     return (
       <div className="contentRootDiv">
-        <Paper className="contentcss">
+        <Paper className="contactcss">
         <Typography component="div">
           <Box className="contentTitle" fontSize="h4.fontSize">
             My Contacts

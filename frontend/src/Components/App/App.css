@@ -309,7 +309,10 @@ blueblue tabs */
   color: rgb(255, 71, 71);
   text-decoration: underline;
 }
-
+.contactcss {
+  height: auto;
+  padding-bottom: 4%;
+}
 
 /** ------------------- Payment Tab -------------- **/
 .paymentRootDiv {
@@ -317,9 +320,11 @@ blueblue tabs */
   flex-direction: row;
   flex-wrap: wrap;
   align-items: stretch;
+  height: 100%;
 }
 .debt {
   flex-grow: 1;
+  flex: 1 1 49%;
 }
 .leftBorder {
   border-left: solid 3px rgb(150, 95, 95);
@@ -335,16 +340,11 @@ blueblue tabs */
   justify-content: space-around;  
   padding: 4%;
   flex-wrap: wrap;
+  flex-direction: column;
+  margin: auto;
 }
-.theirPayment{
-  padding: 10px;
-  margin: 1%;
-  border: solid lightblue;
-}
-.yourPayment{
-  padding: 10px;
-  margin: 1%;
-  border: solid red;
+.payment{
+  padding-bottom: 5%;
 }
 .paymentTitle{
   text-align: center;
@@ -355,9 +355,13 @@ blueblue tabs */
   text-align: center;
   display: flex;
   justify-content: space-between;
+  align-items: center
 }
 .debtBreakdown {
-  display: flex;
   flex-direction: column;
+}
+.debtDetails{
+  text-align: start;
+  word-break: break-word;
 }
 /* YDebts and TDebts have className="Debts" but theres no .Debts css here */
