@@ -8,6 +8,7 @@ import LogoutButton from '../Logout';
 import { UserEventsList, CreateEventForm } from '../Events';
 import { withFirebase } from '../Firebase';
 import ContactList from "../Contacts/contactList";
+import EventSuggestions from '../Suggestions';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -369,7 +370,7 @@ class HomeNavBar extends React.Component {
         {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 2 && <TabContainer> <ContactList authUser={authUser} firebase={firebase} /> </TabContainer>}
-        {value === 3 && <TabContainer> EventBrite API Soontm </TabContainer>}
+        {value === 3 && <TabContainer> <EventSuggestions /> </TabContainer>}
         {value === 4 && <TabContainer>
                           <Payment 
                             authUser={authUser} 
