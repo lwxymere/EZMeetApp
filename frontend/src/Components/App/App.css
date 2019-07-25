@@ -158,10 +158,8 @@ body, html, #root, .mainbody {
 }
 .DateErrorDiv {
   text-align: center;
-  /*border: solid 5px red;*/
-  text-decoration: underline double red;
-  text-transform: uppercase;
-  font-weight: bold;
+  color: rgb(255, 71, 71);
+  text-decoration: underline;
 }
 /*
 /* The Red Error Message below the dates*
@@ -252,7 +250,7 @@ blueblue tabs */
 .eventContentHeader {
   display: flex;
   justify-content: center;
-  text-transform: uppercase;
+  text-transform: capitalize;
   background-color: rgb(255, 255, 173);
   padding: 10px;
 }

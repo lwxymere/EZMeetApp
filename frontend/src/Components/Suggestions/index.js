@@ -284,7 +284,7 @@ class EventSuggestions extends Component {
                     <div>
                       <div> 
                         <span> Start: </span>
-                          { moment(new Date(event.start.local).toLocaleString(), 'MMDDYYYY hhmmss a').format('llll') }
+                        { moment(new Date(event.start.local).toLocaleString(), 'MMDDYYYY hhmmss a').format('llll') }
                       </div> 
                       <div>
                         <span> End: </span> 
@@ -330,7 +330,10 @@ class EventSuggestions extends Component {
           {currentPage > 1 ?
             <Button 
             className='moreButton'
-            onClick={() => {this.getEventbriteEvents(currentPage - 1, this.state.filters)}}>
+            onClick={() => {
+              this.getEventbriteEvents(currentPage - 1, this.state.filters);
+              window.scrollTo(0, 550);
+            }}>
               Prev 
             </Button> 
             :
@@ -339,7 +342,10 @@ class EventSuggestions extends Component {
           {hasMorePages ?
             <Button
             className='moreButton'
-            onClick={() => {this.getEventbriteEvents(currentPage + 1, this.state.filters)}}>
+            onClick={() => {
+              this.getEventbriteEvents(currentPage + 1, this.state.filters);
+              window.scrollTo(0, 550);
+            }}>
               Next 
             </Button> 
             :
