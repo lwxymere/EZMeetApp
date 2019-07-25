@@ -38,6 +38,7 @@ import ContactIcon from "@material-ui/icons/Contacts";
 import InspirationIcon from "@material-ui/icons/Whatshot";
 import MoneyIcon from "@material-ui/icons/Money";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SettledDebtIcon from "@material-ui/icons/Done";
 
 /* 1st AppBar */
 const TitleBar = () => {
@@ -92,16 +93,19 @@ const StyledMenuItem = withStyles(theme => ({
 const Profile = ({ authUser, firebase }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [numOfNotifications, setNumOfNotifications] = React.useState(0);
+  const [notifications, setNotifications] = React.useState(null);
 
   useEffect(() => {
-    firebase.db.ref(`users/${authUser.uid}/invites`)
+    firebase.db.ref(`users/${authUser.uid}/notifications`)
       .on('value', snapshot => {
+        console.log('profile listener callback');
         setNumOfNotifications(snapshot.numChildren());
+        setNotifications(snapshot.val());
       });
 
     // Clean up subscription when component unmounts
     return () => {
-      firebase.db.ref(`users/${authUser.uid}/invites`).off()
+      firebase.db.ref(`users/${authUser.uid}/notifications`).off()
     };
   }, [authUser, firebase, numOfNotifications]);
 
@@ -122,7 +126,10 @@ const Profile = ({ authUser, firebase }) => {
           <Badge color="primary" badgeContent={numOfNotifications} className="profileBadge">
             <IconButton  onClick={handleClick} className="profileHiddenButton">
               <Avatar  className="profileAvatar">
-                {<img src={authUser.photoURL} className="profilePicture" alt="" /> }
+                {authUser.photoURL ?
+                  <img src={authUser.photoURL} className="profilePicture" alt="" /> :
+                  authUser.displayName[0]
+                }
               </Avatar>
             </IconButton>
           </Badge>
@@ -132,7 +139,7 @@ const Profile = ({ authUser, firebase }) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <Notifications authUser={authUser} firebase={firebase} />
+            <Notifications authUser={authUser} firebase={firebase} notifications={notifications}/>
           </StyledMenu>
 
           <div className="profileText">
@@ -140,7 +147,7 @@ const Profile = ({ authUser, firebase }) => {
             <div> {authUser.displayName} </div>
           </div>
         </Typography>
-        
+
         <Button className="profileNewEvent">
           <CreateEventForm authUser={authUser} firebase={firebase} />
         </Button>        
@@ -150,35 +157,13 @@ const Profile = ({ authUser, firebase }) => {
   );
 };
 
-// show all received event invites under the profile pic
-class Notifications extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      invites: null,
-    };
-  }
-
-  componentDidMount() {
-    this.props.firebase.db.ref(`users/${this.props.authUser.uid}/invites`)
-      .on('value', snapshot => {
-        if (snapshot.val()) {
-          const invites = Object.values(snapshot.val());
-          this.setState({ invites: invites });
-        }
-      });
-  }
-
-  componentWillUnmount() {
-    this.props.firebase.db.ref(`users/${this.props.authUser.uid}/invites`).off();
-  }
-
-  handleDecision = (eventData, accept) => {
-    const authUser = this.props.authUser;
+const Notifications = ({ authUser, firebase, notifications }) => {
+  
+  // handle accept/decline event invite from notification
+  var handleDecision = (eventData, accept) => {
     var updates = {};
 
-    this.props.firebase.db.ref(`events/${eventData.id}`)
+    firebase.db.ref(`events/${eventData.id}`)
       .once('value', snapshot => {
         if (accept && snapshot.exists()) {
           // if event still exists when notification is accepted,
@@ -187,87 +172,140 @@ class Notifications extends React.Component {
           updates[`events/${eventData.id}/attendees/${authUser.uid}`] = authUser.displayName;
         }
         // remove the event invitation
-        updates[`users/${authUser.uid}/invites/${eventData.id}`] = null;
-        this.props.firebase.db.ref().update(updates)
-          .then(() => window.location.reload() )
-          .catch(error => { console.log(error) });
+        updates[`users/${authUser.uid}/notifications/${eventData.id + "event"}`] = null;
+        firebase.db.ref().update(updates)
+          .then(() => {
+            if (accept) { // only refresh page on accept
+              window.location.reload();
+            }
+          })
+          .catch(error => console.log(error));
       });
   }
 
-  render() {
-    const events = this.state.invites;
-    const loading = this.state.loading;
-    
-    if (loading) { // loading from database
-      return null;
-    } else if (events === null) {
-      return (
-        <StyledMenuItem>
-          <ListItemText primary="You have no new notifications" />
-        </StyledMenuItem>
-      );
-    } else { 
-      return (
-        <Fragment>
-        {events.map(event => (
-          <ExpansionPanel>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1c-content"
-              id="panel1c-header"
-            >
-              <div>
-                <Typography>{"Event invite from " + event.sender}</Typography>
-              </div>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <Typography className="eventContentTitle" variant="h5" component="div">
-                {event.eventName}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Start Time: {event.startTime}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                End Time: {event.endTime}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Location : {event.location}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Details : {event.details}
-              </Typography>
-              <Typography className="eventContentText" variant="body2" component="p">
-                Attendees : 
-                <ol>
-                  {Object.values(event.attendees).map((attendee, index) => (
-                      <li key={index}>
-                        {attendee}
-                      </li>
-                    )
-                  )}
-                </ol>
-              </Typography>
-            </ExpansionPanelDetails>
-            <hr />
-            <ExpansionPanelActions>
-              <Button 
-                size="small" 
-                onClick={() => {this.handleDecision(event, false)}} 
-                color="primary"
-              > Decline </Button>
-              <Button 
-                size="small" 
-                onClick={() => {this.handleDecision(event, true)}} 
-                color="primary"
-              > Accept </Button>
-            </ExpansionPanelActions>
-          </ExpansionPanel>
+  // handle settling of debts from notifications
+  var handleSettled = (debtID) => {
+    var updates = {};
+    // remove the debt notification
+    updates[`users/${authUser.uid}/notifications/${debtID + "debt"}`] = null;
+
+    firebase.db.ref().update(updates)
+      .catch(error => console.log(error));
+  }
+
+  if (notifications === null) {
+    return (
+      <StyledMenuItem>
+        <ListItemText primary="You have no new notifications" />
+      </StyledMenuItem>
+    );
+  } else {
+    return (
+      <Fragment>
+        {Object.values(notifications).map(notification => (
+          <Fragment key={notification.id}>
+            {notification.type === "event" ?
+              <EventNotification
+                eventData={notification}
+                handleDecision={handleDecision}
+              /> :
+              // notification.type === "debt"
+              <DebtNotification
+                debtData={notification}
+                handleSettled={handleSettled}
+              />
+            }
+          </Fragment>
         ))}
-        </Fragment>
-      );
-    }
+      </Fragment>
+    );
   }
 }
+
+const EventNotification = ({ eventData, handleDecision }) => (
+  <ExpansionPanel>
+    <ExpansionPanelSummary
+      expandIcon={<ExpandMoreIcon />}
+      aria-controls="panel1c-content"
+      id="panel1c-header"
+    >
+      <div>
+        <Typography>{"Event invite from " + eventData.sender}</Typography>
+      </div>
+    </ExpansionPanelSummary>
+    <hr />
+    <ExpansionPanelDetails>
+      <Typography className="eventContentTitle" variant="h5" component="div">
+        {eventData.eventName}
+      </Typography>
+      <Typography className="eventContentText" variant="body2" component="p">
+        Start Time: {eventData.startTime}
+      </Typography>
+      <Typography className="eventContentText" variant="body2" component="p">
+        End Time: {eventData.endTime}
+      </Typography>
+      <Typography className="eventContentText" variant="body2" component="p">
+        Location : {eventData.location}
+      </Typography>
+      <Typography className="eventContentText" variant="body2" component="p">
+        Details : {eventData.details}
+      </Typography>
+      <Typography className="eventContentText" variant="body2" component="p">
+        Attendees :
+        <ol>
+          {Object.values(eventData.attendees).map((attendee, index) => (
+            <li key={index}>
+              {attendee}
+            </li>
+          ))}
+        </ol>
+      </Typography>
+    </ExpansionPanelDetails>
+    <hr />
+    <ExpansionPanelActions>
+      <Button
+        size="small"
+        onClick={() => { handleDecision(eventData, false) }}
+        color="primary"
+      > Decline </Button>
+      <Button
+        size="small"
+        onClick={() => { handleDecision(eventData, true) }}
+        color="primary"
+      > Accept </Button>
+    </ExpansionPanelActions>
+  </ExpansionPanel>
+)
+
+const DebtNotification = ({ debtData, handleSettled }) => (
+  <ExpansionPanel>
+    <ExpansionPanelSummary
+      expandIcon={<ExpandMoreIcon />}
+      aria-controls="panel1c-content"
+      id="panel1c-header"
+    >
+      <div>
+        <Typography>{debtData.debtDetails}</Typography>
+      </div>
+    </ExpansionPanelSummary>
+    <hr />
+    <ExpansionPanelDetails>
+      <Typography className="eventContentText" variant="body2" component="p">
+        Event: {debtData.eventDetails}
+      </Typography>
+    </ExpansionPanelDetails>
+    <ExpansionPanelActions>
+      <Tooltip title="Settled" placement="top">
+        <Button
+          size="small"
+          onClick={() => {handleSettled(debtData.id)}}
+          color="primary"
+        > <SettledDebtIcon /> </Button>
+      </Tooltip>
+    </ExpansionPanelActions>
+    <hr />
+  </ExpansionPanel>
+)
 
 /* For the Blue Tabs */
 function TabContainer(props) {
@@ -313,7 +351,15 @@ class HomeNavBar extends React.Component {
     this.setState({ loading: true });
     this.props.firebase.db.ref(`users/${this.props.authUser.uid}/IOU`)
       .on('value', snapshot => {
-        if (!snapshot.val()) return; // no IOUs
+        if (!snapshot.val()) { // no IOUs
+          this.setState({ // reset to default state
+            theirDebt: {},
+            yourDebt: {},
+            IOUCount: 0,
+            loading: false,
+          });
+          return;
+        }
 
         // for notification number on the blue tab
         var IOUCount = snapshot.child('theirDebt').numChildren() + snapshot.child('myDebt').numChildren();
@@ -371,15 +417,16 @@ class HomeNavBar extends React.Component {
         {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 2 && <TabContainer> <ContactList authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 3 && <TabContainer> <EventSuggestions /> </TabContainer>}
-        {value === 4 && <TabContainer>
-                          <Payment 
-                            authUser={authUser} 
-                            firebase={firebase}
-                            theirDebt={theirDebt}
-                            yourDebt={yourDebt}
-                            loading={loading}
-                          /> 
-                        </TabContainer> 
+        {value === 4 && 
+          <TabContainer>
+            <Payment 
+              authUser={authUser} 
+              firebase={firebase}
+              theirDebt={theirDebt}
+              yourDebt={yourDebt}
+              loading={loading}
+            /> 
+          </TabContainer>
         }
       </div>
     );

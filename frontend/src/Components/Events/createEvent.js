@@ -22,6 +22,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import DateFnsUtils from '@date-io/date-fns';
 import {  MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DateTimePicker } from "@material-ui/pickers";
+import Moment from 'moment';
 
 
 const INITIAL_STATE = {
@@ -31,7 +32,7 @@ const INITIAL_STATE = {
   location: "",
   details: "",
   open: false,
-  timeError: null,
+  inputError: null,
   error: null,
 };
 
@@ -43,11 +44,22 @@ class CreateEventForm extends Component {
   }
 
   handleSubmit = authUser => event => {
+    // max char limit of 25 chars for eventName/location
+    if (this.state.eventName.length > 25 || this.state.location.length > 25) {
+        this.setState({ inputError: "Max character limit of 25 for Event Name and Location"})
+        return;
+    }
+    // max char limit of 50 chars for event details
+    if (this.state.details.length > 50) {
+        this.setState({ inputError: "Max character limit of 50 for Event Details"})
+        return;
+    }
     // ensure that endTime is after startTime
     if (this.state.startTime >= this.state.endTime) {
-      this.setState({ timeError: "Pls review your Start and End Time." });
+      this.setState({ inputError: "Please review your Start and End Times." });
       return;
     }
+
     // generate unique event id
     var newEventKey = this.props.firebase.db.ref().child("events").push().key;
 
@@ -55,8 +67,8 @@ class CreateEventForm extends Component {
       owner: authUser.uid,
       id: newEventKey,
       eventName: this.state.eventName,
-      startTime: this.state.startTime.toLocaleString(),
-      endTime: this.state.endTime.toLocaleString(),
+      startTime: Moment(new Date(this.state.startTime)).format("llll"),
+      endTime: Moment(new Date(this.state.endTime)).format("llll"),
       location: this.state.location,
       details: this.state.details,
       attendees: { [authUser.uid]: authUser.displayName },
@@ -151,9 +163,9 @@ class CreateEventForm extends Component {
                   />
                 </Grid>
 
-                { this.state.timeError && 
+                { this.state.inputError && 
                   <div className="DateErrorDiv"> 
-                    {this.state.timeError} 
+                    {this.state.inputError} 
                   </div>
                 }  
 
@@ -262,7 +274,7 @@ class EditEventButton extends Component {
       endTime: new Date(this.props.eventData.endTime),
       location: this.props.eventData.location,
       details: this.props.eventData.details,
-      timeError: null,
+      inputError: null,
       error: null,
     };
   }
@@ -288,9 +300,19 @@ class EditEventButton extends Component {
   }
 
   handleSubmit = () => {
+    // max char limit of 25 chars for eventName/location
+    if (this.state.eventName.length > 25 || this.state.location.length > 25) {
+        this.setState({ inputError: "Max character limit of 25 for Event Name and Location"})
+        return;
+    }
+    // max char limit of 50 chars for event details
+    if (this.state.details.length > 50) {
+        this.setState({ inputError: "Max character limit of 50 for Event Details"})
+        return;
+    }
     // ensure that endTime is after startTime
     if (this.state.startTime >= this.state.endTime) {
-      this.setState({ timeError: "Pls review your start and End Time." });
+      this.setState({ inputError: "Please review your Start and End Times." });
       return;
     }
 
@@ -368,9 +390,9 @@ class EditEventButton extends Component {
                     required
                   />
                 </Grid>
-                { this.state.timeError && 
+                { this.state.inputError && 
                   <div className="DateErrorDiv"> 
-                    {this.state.timeError} 
+                    {this.state.inputError} 
                   </div>
                 }  
               </MuiPickersUtilsProvider>
@@ -423,12 +445,22 @@ class CreateDebtForm extends Component {
   }
   
   handleSubmit = () => {
+    const debtList = this.state.debtList;
+
+    for (var key in debtList) {
+      // dont allow submit if any field fails the money format regex
+      if (!(/^[0-9]+(\.[0-9]{2})?$/.test(debtList[key]))) {
+        this.setState({ error: "Please input numeric values only"});
+        return;
+      }
+    }
+
     var eventData = this.props.eventData;
     var updates = {};
 
     for (let id in this.props.eventData.attendees) { // id is the contact's id
       let name = this.props.eventData.attendees[id];
-      let date = (new Date(eventData.startTime)).toDateString();
+      let date = Moment(new Date(eventData.startTime)).format("llll");
 
       // skip updates if debt field is left blank for a certain friend
       // skip the user himself
@@ -465,7 +497,7 @@ class CreateDebtForm extends Component {
   handleChange = event => {
     var updatedDebtList = { 
       ...this.state.debtList,
-      [event.target.name] : event.target.value
+      [event.target.name] : event.target.value,
     };
     this.setState({ debtList: updatedDebtList });
   }
@@ -521,6 +553,7 @@ class CreateDebtForm extends Component {
             
             <DialogContent  className='debtAttendees'>
               <div> {createForm} </div>
+              {this.state.error && <p>{this.state.error}</p>}
             </DialogContent>
             
             <DialogActions>

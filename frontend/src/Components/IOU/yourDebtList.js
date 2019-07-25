@@ -27,6 +27,10 @@ const YourDebt = ({ authUser, firebase, yourDebt, loading }) => {
       myCurrentDebt.push(debt);
     }
 
+    if (totalDebt % 1 !== 0) { // got cents in the debt
+      totalDebt = totalDebt.toFixed(2); // force cents to 2 d.p.
+    }
+
     debts.push({
       total: totalDebt,
       name: debtList[0].name,
@@ -160,6 +164,14 @@ const DeleteDebtButton = ({ authUser, firebase, debtDetails }) => (
           updates[`users/${authUser.uid}/IOU/myDebt/${debtDetails.uid}/${debtDetails.debtID}`] = null;
           // delete debt for friend
           updates[`users/${debtDetails.uid}/IOU/theirDebt/${authUser.uid}/${debtDetails.debtID}`] = null;
+          // send notification to friend to say debt cleared
+          // append 'debt' to the debt id to differentiate from event invite notifications for the same event id
+          updates[`users/${debtDetails.uid}/notifications/${debtDetails.debtID + "debt"}`] = {
+            id: debtDetails.debtID,
+            debtDetails: `${authUser.displayName} has cleared a debt of $${debtDetails.amount}`,
+            eventDetails: debtDetails.details,
+            type: "debt",
+          };
 
           firebase.db.ref().update(updates)
             .catch(error => console.log(error));

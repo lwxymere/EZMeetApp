@@ -27,6 +27,10 @@ const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
       currentFriendsDebts.push(debt);
     }
 
+    if (totalDebt % 1 !== 0) { // got cents in the debt
+      totalDebt = totalDebt.toFixed(2); // force cents to 2 d.p.
+    }
+
     debts.push({
       total: totalDebt,
       name: debtList[0].name,
@@ -39,7 +43,7 @@ const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
       <Paper className="contentcss">
         <Typography component="div" className="paymentPaper">
           <Box className="contentTitle" fontSize="h4.fontSize">
-            Their Debt
+            Outstanding Payments
           </Box>
           <TDebts
             firebase={firebase}

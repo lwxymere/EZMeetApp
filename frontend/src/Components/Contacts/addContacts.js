@@ -16,7 +16,10 @@ class AddContactsBarBase extends Component {
   }
 
   handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({
+      [event.target.name]: event.target.value,
+      submitMsg: null, // reset submit message
+    });
   }
 
   addToContacts = (friendUid, friendName, friendEmail) => {
@@ -29,33 +32,59 @@ class AddContactsBarBase extends Component {
       });
   }
 
-  // figure out how to handle adding friends one after another
-  // mainly how the add friend success msg is reset
   handleSubmit = event => {
+    // regex for valid email address
+    if (!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.state.query))) {
+      this.setState({ submitMsg: "Please enter a valid email address" });
+      return;
+    }
+
+    // dont allow user to add self as contact
+    if (this.state.query === this.props.authUser.email) {
+      this.setState({
+        submitMsg: "Error: Unable to add self as a Contact",
+      });
+      return;
+    }
+
+    // assert this.state.query is the email of a new contact
     this.props.firebase.db
-      .ref('users')
+      .ref(`users/${this.props.authUser.uid}/contacts/`)
       .orderByChild('email')
       .equalTo(this.state.query)
       .once('value', snapshot => {
         if (snapshot.val()) {
-          const friendUid = Object.keys(snapshot.val())[0];
-          this.addToContacts(friendUid, 
-            snapshot.child(`${friendUid}/username`).val(), 
-            this.state.query)
-            .then(() => {
-              this.setState({
-                query: "",
-                submitMsg: "Contact Successfully Added!",
-              })
-            })
-            .catch(error => {
-              console.log('error', error.message);
-            });
-        } else {
+          // query email has already been added as a contact
           this.setState({
-            submitMsg: "Invalid Email Address / Email Address entered is not a registered user"
+            submitMsg: `${this.state.query} has already been added as a Contact`,
           });
+          return;
         }
+        
+        this.props.firebase.db
+          .ref('users')
+          .orderByChild('email')
+          .equalTo(this.state.query)
+          .once('value', snapshot => {
+            if (snapshot.val()) {
+              const friendUid = Object.keys(snapshot.val())[0];
+              const friendName = snapshot.child(`${friendUid}/username`).val();
+              const friendEmail = this.state.query;
+
+              this.addToContacts(friendUid, friendName, friendEmail)
+                .then(() => {
+                  this.setState({
+                    query: "",
+                    submitMsg: "Contact Successfully Added!",
+                  })
+                })
+            } else {
+              this.setState({
+                submitMsg: "Email Address entered is not a registered user"
+              });
+            }
+          })
+
       })
       .catch(error => {
         console.log('error', error.message);

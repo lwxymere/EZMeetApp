@@ -111,7 +111,7 @@ const EventList = ({ firebase, events, loading, authUser }) => {
               <div className="eventContentButtons">
                 <InviteDialogButton authUser={authUser} eventData={event} />
                 <CreateDebtForm authUser={authUser} firebase={firebase} eventData={event} />
-                <EditEventButton firebase={firebase} eventData={event} />
+                {event.owner === authUser.uid && <EditEventButton firebase={firebase} eventData={event} />}
                 {event.owner === authUser.uid ? 
                   <DeleteEventButton firebase={firebase} eventData={event} /> :
                   <DeclineEventButton firebase={firebase} eventData={event} authUser={authUser} />

@@ -137,12 +137,19 @@ const InviteContactButton = ({ contact, eventData, sender, firebase }) => (
   <Tooltip title="Send Invite" placement="top">
     <Button
       onClick={() => {
-        const extendedEventData = { sender: sender, ...eventData };
-        var updates = {};
-        updates[`users/${contact.uid}/invites/${eventData.id}`] = extendedEventData;
-        firebase.db.ref().update(updates)
-          .then(() => alert('Invite Sent!'))
-          .catch(error => console.log(error));
+        if (eventData.attendees[contact.uid]) {
+          // contact is already attending the event
+          alert(`${contact.name} is already attending this event!`);
+        } else {
+          // send invite to contact only if contact is not already attending the event
+          const extendedEventData = { sender: sender, type: "event", ...eventData };
+          var updates = {};
+          // append 'event' to the event id to differentiate from debt notifications for the same event id
+          updates[`users/${contact.uid}/notifications/${eventData.id + "event"}`] = extendedEventData;
+          firebase.db.ref().update(updates)
+            .then(() => alert('Invite Sent!'))
+            .catch(error => console.log(error));
+        }
       }
       }> <AddIcon /> </Button>
   </Tooltip>
