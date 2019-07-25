@@ -23,6 +23,10 @@ const API_KEY = process.env.REACT_APP_EVENTBRITE_API_KEY;
 
 const days = [
   {
+    value: "",
+    label: "None"
+  },
+  {
     value: "today",
     label: "Today"
   },
