@@ -313,6 +313,66 @@ blueblue tabs */
   padding-bottom: 4%;
 }
 
+/** ------------------- EventBrites ------------- **/
+.filterBoxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+}
+/* The following css are so volatile -- idk why its not done right by material ui */
+.filterBox {
+  min-width: 223px !important;
+  padding: 1% !important;
+}
+/* This is so the placeholder is in the center */
+.filterBox .MuiInputLabel-outlined {
+  padding: 10px 13px;
+}
+.filterDivButton{
+  display: flex;
+  justify-content: center;
+  padding-top: 1%;
+  padding-bottom: 3%;
+}
+.filterButton{
+  padding: 1%;
+  border: 2px solid lightcoral !important;
+}
+.suggestRootDiv{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-top: 3%;
+  align-items: baseline;
+}
+.suggestCards {
+  display: flex;
+  flex-flow: wrap;
+  width: 300px;
+  margin: 1.5%;
+  justify-content: center;
+  text-align: center;
+  align-items: flex-start;
+  justify-items: flex-start;
+}
+.eventlogo{
+  width: 100%;
+  height: auto;
+}
+.eventDetails {
+  text-align: center;
+}
+.moreButtons {
+  display: flex;
+  justify-content: center;
+  padding: 2%;
+}
+.moreButton {
+  border: solid red 2px !important;
+  margin: 2% !important;
+}
+
 /** ------------------- Payment Tab -------------- **/
 .paymentRootDiv {
   display: flex;

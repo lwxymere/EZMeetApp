@@ -24,7 +24,7 @@ Please update when you install new things.
 
 `npm install moment`
 
-
+`npm install react-scroll-up-button`
 
 ________________________________________________
 
