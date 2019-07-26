@@ -72,9 +72,9 @@ const About = () => {
           <LinkIcon className="iconIcon" />{" "}
         </div>
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p" className='aboutText'>
             Connect easily with your friends by planning events to go out with
-            them. Organising a common date has never been easier.
+            them. Organising events have never been easier.
           </Typography>
         </CardContent>
       </Card>
@@ -85,9 +85,9 @@ const About = () => {
           <CalendarIcon className="iconIcon" />
         </div>
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p" className='aboutText'>
             Keep track of when you are available for events and update them
-            automatically with your google Calendar/account.
+            automatically on your account.
           </Typography>
         </CardContent>
       </Card>
@@ -99,7 +99,7 @@ const About = () => {
           <MoneyIcon className="iconIcon" />
         </div>
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p" className='aboutText'>
             Record loans after events and resolve them later at your own
             convenience
           </Typography>
@@ -112,7 +112,7 @@ const About = () => {
           <EventIcon className="iconIcon" />{" "}
         </div>
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="p" className='aboutText'>
             Get suggestions for upcoming and exciting activities/promotions to
             do something new once in a while.
           </Typography>

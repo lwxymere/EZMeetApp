@@ -1,17 +1,16 @@
 import React from 'react';
 
+import { AddContactsBar } from "./addContacts";
+import { withFirebase } from '../Firebase';
+
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
-import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add"
-
-import { AddContactsBar } from "./addContacts";
-
-import { withFirebase } from '../Firebase';
+import DeleteIcon from "@material-ui/icons/Delete";
 
 class ContactList extends React.Component {
   constructor(props) {
@@ -87,31 +86,39 @@ const Contacts = ({ firebase, contacts, loading, authUser, eventData }) => {
     return null;
   } else { // render user events
     return (
-      <ol className="contentListed">
+      <div className="contentListed">
         {contacts.map(contact => (
-          <li key={contact.uid}>
-            <div>
-              <strong>Name:  {contact.name}</strong>
-              {eventData ?
-              <InviteContactButton 
-                contact={contact}
-                eventData={eventData}
-                sender={authUser.displayName}
-                firebase={firebase}
-              /> :
-              <DeleteContactButton 
-                userID={authUser.uid}
-                contactID={contact.uid}
-                firebase={firebase}
-              />
-              }
-              <br />
-              <strong>Email: {contact.email}</strong>
-              <br />
+          <div className='contactBorder'>
+            <div key={contact.uid} className='contactDetails'>
+              <div className='contactDetail'> 
+                <div className='contactInfo'>
+                  <span className='contactU'> Name: </span>
+                  {contact.name} 
+                </div>
+                <div className='contactInfo'> 
+                  <span className='contactU'> Email: </span>
+                  {contact.email}  
+                </div>
+              </div>
+              
+              <div className='contactButton'>
+                {eventData ?
+                <InviteContactButton 
+                  contact={contact}
+                  eventData={eventData}
+                  sender={authUser.displayName}
+                  firebase={firebase}
+                /> :
+                <DeleteContactButton 
+                  userID={authUser.uid}
+                  contactID={contact.uid}
+                  firebase={firebase}
+                />}
+              </div>
             </div>
-          </li>
+          </div>
         ))}
-      </ol>
+      </div>
     );
   }
 };

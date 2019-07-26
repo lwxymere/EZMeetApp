@@ -43,7 +43,7 @@ const YourDebt = ({ authUser, firebase, yourDebt, loading }) => {
       <Paper className="contentcss">
         <Typography component="div" className="paymentPaper">
           <Box className="contentTitle" fontSize="h4.fontSize">
-            My Debts
+            Paying
           </Box>
           <YDebts
             firebase={firebase}
@@ -57,6 +57,7 @@ const YourDebt = ({ authUser, firebase, yourDebt, loading }) => {
   );
 }
 
+/** ------------------- YDebts ---------------------- **/
 const ExpansionPanel = withStyles({
   root: {
     border: '1px solid rgba(0, 0, 0, .125)',

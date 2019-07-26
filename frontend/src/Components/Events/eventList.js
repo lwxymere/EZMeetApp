@@ -8,14 +8,18 @@ import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider'
 
 import { withFirebase } from '../Firebase';
-import { DeleteEventButton, DeclineEventButton, EditEventButton, InviteDialogButton, CreateDebtForm } from './createEvent';
+import { CreateDebtForm,
+         DeleteEventButton, 
+         DeclineEventButton, 
+         EditEventButton, 
+         InviteDialogButton } from './createEvent';
 
 class UserEventsList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
       loading: false,
+      events: [],
       eventIDs: [],
     };
   }
@@ -134,8 +138,6 @@ const EventList = ({ firebase, events, loading, authUser }) => {
                   Details : {event.details}
                 </Typography>
               
-              
-                { /* I want to change this to some form of expansion panel but its so ugly so idk :/ */}
                 <Typography className="eventContentText" variant="body2" component="p">
                   Attendees : 
                   <ol>

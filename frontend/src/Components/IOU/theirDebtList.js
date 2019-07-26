@@ -14,7 +14,6 @@ import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
-  
   var debts = [];
   // each loop iteration gives all the debts for a single friendID
   for (let friendID in theirDebt) {
@@ -43,7 +42,7 @@ const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
       <Paper className="contentcss">
         <Typography component="div" className="paymentPaper">
           <Box className="contentTitle" fontSize="h4.fontSize">
-            Outstanding Payments
+            Receiving
           </Box>
           <TDebts
             firebase={firebase}
@@ -57,6 +56,8 @@ const TheirDebt = ({ authUser, firebase, theirDebt, loading }) => {
   );
 }
 
+
+/** ------------------- TDebts ---------------------- **/
 const ExpansionPanel = withStyles({
   root: {
     border: '1px solid rgba(0, 0, 0, .125)',

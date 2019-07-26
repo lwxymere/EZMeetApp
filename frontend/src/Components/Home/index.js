@@ -12,35 +12,35 @@ import EventSuggestions from '../Suggestions';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
+import Badge from "@material-ui/core/Badge";
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
+import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 
-import { Badge } from "@material-ui/core";
 
-import PeopleIcon from "@material-ui/icons/People";
-import EventIcon from "@material-ui/icons/Event";
 import CalendarIcon from "@material-ui/icons/CalendarToday";
 import ContactIcon from "@material-ui/icons/Contacts";
+import EventIcon from "@material-ui/icons/Event";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InspirationIcon from "@material-ui/icons/Whatshot";
 import MoneyIcon from "@material-ui/icons/Money";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import PeopleIcon from "@material-ui/icons/People";
 import SettledDebtIcon from "@material-ui/icons/Done";
 
-/* 1st AppBar */
+/** ---------------------- 1st AppBar -------------------- **/
 const TitleBar = () => {
   return (
     <div className="titleRootDiv">
@@ -57,7 +57,7 @@ const TitleBar = () => {
   );
 };
 
-/* 2nd AppBar below */
+/** --------------------- 2nd AppBar below -------------------- **/
 /* This is the menu part that appears when click on Avatar */
 const StyledMenu = withStyles({
   paper: {
@@ -73,7 +73,7 @@ const StyledMenu = withStyles({
     }}
     transformOrigin={{
       vertical: 'top',
-      horizontal: 'center',
+      horizontal: 'left',
     }}
     {...props}
   />
@@ -98,7 +98,7 @@ const Profile = ({ authUser, firebase }) => {
   useEffect(() => {
     firebase.db.ref(`users/${authUser.uid}/notifications`)
       .on('value', snapshot => {
-        console.log('profile listener callback');
+        //console.log('profile listener callback');
         setNumOfNotifications(snapshot.numChildren());
         setNotifications(snapshot.val());
       });
@@ -122,7 +122,6 @@ const Profile = ({ authUser, firebase }) => {
       <AppBar className="profileBar" position="static">
         <Toolbar>
         <Typography className="profileDetails">
-
           <Badge color="primary" badgeContent={numOfNotifications} className="profileBadge">
             <IconButton  onClick={handleClick} className="profileHiddenButton">
               <Avatar  className="profileAvatar">
@@ -157,8 +156,51 @@ const Profile = ({ authUser, firebase }) => {
   );
 };
 
+/** ----------------------- For Notifications  --------------------- **/
+const ExpansionPanel = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    width: '100%',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+  },
+  expanded: {},
+})(MuiExpansionPanel);
+
+const ExpansionPanelSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(243, 241, 239, 1)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    minHeight: 56,
+    '&$expanded': {
+      minHeight: 56,
+    },
+  },
+  content: {
+    '&$expanded': {
+      margin: '12px 0',
+    },
+  },
+  expanded: {},
+})(MuiExpansionPanelSummary);
+
+const ExpansionPanelDetails = withStyles(theme => ({
+  root: {
+    display: 'block',
+    padding: theme.spacing(2.3),
+  },
+}))(MuiExpansionPanelDetails);
+
 const Notifications = ({ authUser, firebase, notifications }) => {
-  
   // handle accept/decline event invite from notification
   var handleDecision = (eventData, accept) => {
     var updates = {};
@@ -230,50 +272,56 @@ const EventNotification = ({ eventData, handleDecision }) => (
       id="panel1c-header"
     >
       <div>
-        <Typography>{"Event invite from " + eventData.sender}</Typography>
+        <Typography> {"Event invite from " + eventData.sender} </Typography>
       </div>
     </ExpansionPanelSummary>
-    <hr />
     <ExpansionPanelDetails>
-      <Typography className="eventContentTitle" variant="h5" component="div">
-        {eventData.eventName}
-      </Typography>
-      <Typography className="eventContentText" variant="body2" component="p">
-        Start Time: {eventData.startTime}
-      </Typography>
-      <Typography className="eventContentText" variant="body2" component="p">
-        End Time: {eventData.endTime}
-      </Typography>
-      <Typography className="eventContentText" variant="body2" component="p">
-        Location : {eventData.location}
-      </Typography>
-      <Typography className="eventContentText" variant="body2" component="p">
-        Details : {eventData.details}
-      </Typography>
-      <Typography className="eventContentText" variant="body2" component="p">
-        Attendees :
-        <ol>
-          {Object.values(eventData.attendees).map((attendee, index) => (
-            <li key={index}>
-              {attendee}
-            </li>
-          ))}
-        </ol>
-      </Typography>
+      <div className='eventNotif'>
+        <div className='eventNotifText'>
+          <Typography className="eventContentTitle" variant="h6" component="div">
+            {eventData.eventName}
+          </Typography>
+          <Typography className="eventContentText" variant="body2" component="p">
+            Start Time: {eventData.startTime}
+          </Typography>
+          <Typography className="eventContentText" variant="body2" component="p">
+            End Time: {eventData.endTime}
+          </Typography>
+          <Typography className="eventContentText" variant="body2" component="p">
+            Location : {eventData.location}
+          </Typography>
+          <Typography className="eventContentText" variant="body2" component="p">
+            Details : {eventData.details}
+          </Typography>
+          <Typography className="eventContentText" variant="body2" component="p">
+            Attendees :
+            <ol>
+              {Object.values(eventData.attendees).map((attendee, index) => (
+                <li key={index}>
+                  {attendee}
+                </li>
+              ))}
+            </ol>
+          </Typography>
+        </div>
+        <ExpansionPanelActions className='eventDivNotif'>
+          <div className='eventNotifButtons'>
+            <Button
+              className='eventNotifButton'
+              size="small"
+              onClick={() => { handleDecision(eventData, true) }}
+              color="primary"
+            > Accept </Button>
+              <Button
+              className='eventNotifButton'
+              size="small"
+              onClick={() => { handleDecision(eventData, false) }}
+              color="primary"
+            > Decline </Button>
+          </div>
+        </ExpansionPanelActions>
+      </div>
     </ExpansionPanelDetails>
-    <hr />
-    <ExpansionPanelActions>
-      <Button
-        size="small"
-        onClick={() => { handleDecision(eventData, false) }}
-        color="primary"
-      > Decline </Button>
-      <Button
-        size="small"
-        onClick={() => { handleDecision(eventData, true) }}
-        color="primary"
-      > Accept </Button>
-    </ExpansionPanelActions>
   </ExpansionPanel>
 )
 
@@ -288,26 +336,29 @@ const DebtNotification = ({ debtData, handleSettled }) => (
         <Typography>{debtData.debtDetails}</Typography>
       </div>
     </ExpansionPanelSummary>
-    <hr />
     <ExpansionPanelDetails>
-      <Typography className="eventContentText" variant="body2" component="p">
-        Event: {debtData.eventDetails}
-      </Typography>
+      <div className='debtNotif'>
+        <Typography className="debtNotifText" variant="body2" component="p">
+          Event: {debtData.eventDetails}
+        </Typography>
+        <ExpansionPanelActions>
+          <div className='debtNotifButton'>
+            <Tooltip title="Received" placement="top">
+              <Button
+                className='deleteButton'
+                size="small"
+                onClick={() => {handleSettled(debtData.id)}}
+                color="primary"
+              > <SettledDebtIcon /> </Button>
+            </Tooltip>
+          </div>
+        </ExpansionPanelActions>
+      </div>
     </ExpansionPanelDetails>
-    <ExpansionPanelActions>
-      <Tooltip title="Settled" placement="top">
-        <Button
-          size="small"
-          onClick={() => {handleSettled(debtData.id)}}
-          color="primary"
-        > <SettledDebtIcon /> </Button>
-      </Tooltip>
-    </ExpansionPanelActions>
-    <hr />
   </ExpansionPanel>
 )
 
-/* For the Blue Tabs */
+/** ----------------- For the Blue Tabs ------------------ **/
 function TabContainer(props) {
   return (
     <Typography component="div" className="tabcontentDiv">
@@ -392,12 +443,6 @@ class HomeNavBar extends React.Component {
             <Tooltip title="Calendar" placement="bottom">
               <LinkTab icon={<CalendarIcon />} href="/calendar" />
             </Tooltip>
-            <Tooltip title="Contact" placement="bottom">
-              <LinkTab icon={<ContactIcon />} href="/contact" />
-            </Tooltip>
-            <Tooltip title="Suggest An Event" placement="bottom">
-              <LinkTab icon={<InspirationIcon />} href="/noidea" />
-            </Tooltip>
             <Tooltip title="IOU" placement="bottom">
               <LinkTab 
                 label={
@@ -411,13 +456,17 @@ class HomeNavBar extends React.Component {
                 }
               />
             </Tooltip>
+            <Tooltip title="Contact" placement="bottom">
+              <LinkTab icon={<ContactIcon />} href="/contact" />
+            </Tooltip>
+            <Tooltip title="Suggest An Event" placement="bottom">
+              <LinkTab icon={<InspirationIcon />} href="/eventBrite" />
+            </Tooltip>
           </Tabs>
         </AppBar>
         {value === 0 && <TabContainer> <UserEventsList authUser={authUser} firebase={firebase} /> </TabContainer>}
         {value === 1 && <TabContainer> <CalendarRoot authUser={authUser} firebase={firebase} /> </TabContainer>}
-        {value === 2 && <TabContainer> <ContactList authUser={authUser} firebase={firebase} /> </TabContainer>}
-        {value === 3 && <TabContainer> <EventSuggestions /> </TabContainer>}
-        {value === 4 && 
+        {value === 2 && 
           <TabContainer>
             <Payment 
               authUser={authUser} 
@@ -428,6 +477,9 @@ class HomeNavBar extends React.Component {
             /> 
           </TabContainer>
         }
+        {value === 3 && <TabContainer> <ContactList authUser={authUser} firebase={firebase} /> </TabContainer>}
+        {value === 4 && <TabContainer> <EventSuggestions /> </TabContainer>}
+        
       </div>
     );
   }
@@ -450,5 +502,4 @@ const HomePage = ({ firebase }) => {
 }
 
 const condition = authUser => !!authUser;
-
 export default withAuthorization(condition)(withFirebase(HomePage));

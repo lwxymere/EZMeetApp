@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
 import { withFirebase } from '../Firebase';
-import { Button } from '@material-ui/core';
+
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+
 import AddIcon from '@material-ui/icons/PersonAdd';
 
 // need pass props firebase and authUser
@@ -115,20 +117,6 @@ class AddContactsBarBase extends Component {
           { submitMsg && 
           <div className="contactError"> {submitMsg} </div> } 
         </div>
-
-      /*
-      <form>
-        <input
-          name="query"
-          type="text"
-          onChange={this.handleChange}
-          placeholder="Enter a Friend's Email Address"
-        />
-        <button onClick={this.handleSubmit}>
-          Add Contact
-        </button>
-        { submitMsg && <span>{ submitMsg }</span>}
-      </form>*/
     );
   }
 }

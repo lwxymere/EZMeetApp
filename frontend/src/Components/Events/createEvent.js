@@ -3,25 +3,26 @@ import React, { Component, Fragment } from 'react';
 import ContactList from '../Contacts/contactList';
 
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton'
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton'
 import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 
+import ClearIcon from '@material-ui/icons/Clear'
 import DeleteIcon from "@material-ui/icons/Delete";
-import MoneyAttachIcon from "@material-ui/icons/AttachMoney"
 import EditIcon from '@material-ui/icons/Edit';
 import InviteIcon from '@material-ui/icons/PersonAdd';
-import ClearIcon from '@material-ui/icons/Clear'
+import MoneyAttachIcon from "@material-ui/icons/AttachMoney"
 
-import DateFnsUtils from '@date-io/date-fns';
 import {  MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DateTimePicker } from "@material-ui/pickers";
+
+import DateFnsUtils from '@date-io/date-fns';
 import Moment from 'moment';
 
 
@@ -138,7 +139,6 @@ class CreateEventForm extends Component {
                 <Grid container className="TimePicker">
                   <DateTimePicker
                     id="startTime"
-                    className="indiTimePicker"
                     inputVariant="outlined"
                     disablePast
                     margin="dense"
@@ -151,7 +151,6 @@ class CreateEventForm extends Component {
                   <DateTimePicker
                     required
                     id="endTime"
-                    className="indiTimePicker"
                     inputVariant="outlined"
                     disablePast
                     margin="dense"
@@ -159,16 +158,8 @@ class CreateEventForm extends Component {
                     onChange={this.handleEndTime}
                     label="End Time"
                     minDateMessage=""
-
                   />
                 </Grid>
-
-                { this.state.inputError && 
-                  <div className="DateErrorDiv"> 
-                    {this.state.inputError} 
-                  </div>
-                }  
-
               </MuiPickersUtilsProvider>
               
               <TextField
@@ -190,11 +181,16 @@ class CreateEventForm extends Component {
                 value={this.state.details}
                 onChange={this.handleChange}
                 fullWidth
-                multiline rows="2" 
               />
             </form>
           </DialogContent>
           
+          { this.state.inputError && 
+            <div className="ErrorDiv"> 
+              {this.state.inputError} 
+            </div>
+          }  
+
           <DialogActions>
             <Button onClick={this.handleClose}>
               Cancel
@@ -390,11 +386,7 @@ class EditEventButton extends Component {
                     required
                   />
                 </Grid>
-                { this.state.inputError && 
-                  <div className="DateErrorDiv"> 
-                    {this.state.inputError} 
-                  </div>
-                }  
+
               </MuiPickersUtilsProvider>
               <TextField
                 name="location"
@@ -415,11 +407,16 @@ class EditEventButton extends Component {
                 value={this.state.details}
                 onChange={this.handleChange}
                 fullWidth
-                multiline rows="2" 
               />
             </form>
           </DialogContent>
-          
+
+          { this.state.inputError && 
+            <div className="ErrorDiv"> 
+              {this.state.inputError} 
+            </div>
+          }  
+
           <DialogActions>
             <Button onClick={this.handleClose}>
               Cancel
@@ -553,7 +550,12 @@ class CreateDebtForm extends Component {
             
             <DialogContent  className='debtAttendees'>
               <div> {createForm} </div>
-              {this.state.error && <p>{this.state.error}</p>}
+              
+              { this.state.error && 
+                <div className="ErrorDiv"> 
+                  {this.state.error} 
+                </div>
+              }  
             </DialogContent>
             
             <DialogActions>
@@ -629,4 +631,3 @@ export {
   CreateDebtForm, 
   InviteDialogButton 
 };
-

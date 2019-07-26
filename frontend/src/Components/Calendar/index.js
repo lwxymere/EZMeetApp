@@ -1,24 +1,19 @@
 import React, { Component } from "react";
 import moment from "moment";
+
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Paper } from "@material-ui/core";
+
+import Paper from "@material-ui/core/Paper";
 
 const localizer = momentLocalizer(moment);
-
-/**
- * Potential update/upgrade could be 
- * 1. Making a popup/Modal when a current event is clicked to display its information.
- * 2. Obtaining event from Google Calendar.
- */
 
 class EventsCalendar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
       loading: false,
-      isEditModalOpen: false,
+      events: [],
       currentEvent: [],
     };
   }
@@ -64,15 +59,6 @@ class EventsCalendar extends Component {
       });
   };
 
-  toggleEditModal = event => {    
-    if (!this.state.isAddModalOpen) {
-      this.setState({
-        currentEvent: event,
-        isEditModalOpen: !this.state.isEditModalOpen,
-      });
-    }
-  };
-
   render() {
     const { events, loading } = this.state;
     
@@ -93,18 +79,17 @@ class EventsCalendar extends Component {
           tooltipAccessor='details'
     
           popup
-          //onShowMore={(events, date) => this.setState({showModal: true, events})}
           views={['month', 'day', 'agenda']}
           localizer={localizer}
           events={events}
-          //onSelectEvent={event => console.log(event)}
           onSelectEvent={event => alert(`Details: ${event.details} Location: ${event.location}`)}
+          //onShowMore={(events, date) => this.setState({showModal: true, events})}
+          //onSelectEvent={event => console.log(event)}
           />
         </Paper>
       );
     }
   }
 } 
-
 
 export default EventsCalendar;

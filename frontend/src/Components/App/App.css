@@ -15,7 +15,7 @@ body, html, #root, .mainbody {
 .bar {
   background-image: radial-gradient(
     at 50% 80%,
-    rgb(40, 45, 59) 15%,
+    rgb(40, 45, 59) 30%,
     rgb(0, 0, 0)
   );
 }
@@ -33,7 +33,7 @@ body, html, #root, .mainbody {
 /* Banner */
 .bannerRootDiv {
   padding: 10%;
-  padding-bottom: 11%;
+  padding-bottom: 12%;
 }
 .bannerTitle {
   text-align: center;
@@ -53,7 +53,7 @@ body, html, #root, .mainbody {
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  background-color: purple;
+  background-color:rgb(0, 83, 156);
   max-width: 100% !important;
   padding: 2%;
 }
@@ -68,6 +68,9 @@ body, html, #root, .mainbody {
 .aboutTitle {
   text-align: center;
 }
+.aboutText {
+  text-align: center;
+}
 .icon {
   display: flex;
   justify-content: center;
@@ -75,7 +78,7 @@ body, html, #root, .mainbody {
 }
 .iconIcon {
   font-size: 100px !important;
-  background-color: blue;
+  background-color: rgb(203, 206, 145);
   border-radius: 50%;
   padding: 4%;
 }
@@ -84,7 +87,7 @@ body, html, #root, .mainbody {
 .howtoRootDiv {
   display: flex;
   flex-direction: column;
-  background-color: rgb(130, 138, 129);
+  background-color: rgb(255, 214, 98);
   max-width: 100% !important;
   padding: 2%;
 }
@@ -99,6 +102,7 @@ body, html, #root, .mainbody {
   padding: 3%;
 }
 
+/* ------------------- Post-login ----------------- **/
 /** ----------------------- HomePage ----------------------- **/
 /* Profile */
 .profileBar{
@@ -126,12 +130,6 @@ body, html, #root, .mainbody {
   right: 5%;
   background-color: rgb(167, 166, 166) !important;
 }
-/*for the event's number on top */
- /* I forgot what this is for and it seems useless lol ^ seems like a lie
- .MuiSvgIcon-root {
-  left: 100%;
-}
-*/
 /* This is for the placement of number on top of avatar */
 .profileBadge .MuiBadge-badge {
   right: 0.5em;
@@ -149,29 +147,16 @@ body, html, #root, .mainbody {
 }
 /*  Start/End Time for Event */
 .TimePicker {
-  padding-top: 2%;
+  padding-top: 4%;
   justify-content: space-around ;
-  padding-bottom: 1%;
 }
-.indiTimePicker {
-  padding: 2% !important;
-}
-.DateErrorDiv {
+.ErrorDiv {
   text-align: center;
   color: rgb(255, 71, 71);
   text-decoration: underline;
+  padding: 3%;
 }
-/*
-/* The Red Error Message below the dates*
-.MuiFormHelperText-contained {
-  margin: 8px 12px;
-}
-/* The space around the Date, inbetween the border and date *
-.MuiOutlinedInput-input {
-  padding: 8.5px 14px !important;
-}
-*/
-
+/* whats this for idk idc */
 .makeStyles-root-145{
   height: 100%;
 }
@@ -183,7 +168,6 @@ body, html, #root, .mainbody {
   top: 0.3em;
 }
 
-
 /** --------------------- Contents --------------------- **/
 /* This is the content part, that draws the line at the side below the
 blueblue tabs */
@@ -191,7 +175,6 @@ blueblue tabs */
   padding: 0 !important;
   height: 100% !important;
 }
-
 .contentRootDiv {
   height: 100%;
 }
@@ -230,13 +213,38 @@ blueblue tabs */
 .nothingorLoading {
   text-align: center;
 }
+/* Notifications */
+.eventNotif {
+  display: flex;
+  flex-direction: column;
+}
+.eventDivNotif {
+  width: 70%;
+}
+.eventNotifButtons{
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly !important;
+}
+.eventNotifButton{
+  border: 2px solid rgb(160, 160, 160) !important;
+  background-color: rgb(201, 201, 201) !important;
+}
+.debtNotif{
+  display: flex;
+  justify-content: space-between;
+}
+.debtNotifText{
+  display: flex;
+  align-items: center;
+}
 
 /** --------------- EVENT tab ---------------- **/
 .eventCards {
   display: flex;
   justify-content: center;
   margin: 5px;
-  width: 275px;
+  width: 290px;
   /*This is to create the border color */
   padding: 5px;
   float: left;
@@ -264,6 +272,7 @@ blueblue tabs */
 }
 .eventContentTitle {
   text-decoration: underline;
+  text-align: center;
 }
 .eventContent{
   padding: 10px;
@@ -310,7 +319,30 @@ blueblue tabs */
   height: auto;
   padding-bottom: 4%;
 }
-
+.contactArrow {
+  font-size: 23px;
+  padding: 2%;
+}
+.contactDetails {
+  display: flex;
+  flex-direction: row;
+  padding: 1%;
+  border: solid 2px green;
+  align-items: center;
+}
+.contactDetail {
+  padding: 1%;
+}
+.contactInfo {
+  width: fit-content;
+  word-break: break-word;
+}
+.contactU {
+  color: grey;
+}
+.contactBorder {
+  padding: 1%;
+}
 /** ------------------- EventBrites ------------- **/
 .filterBoxes {
   display: flex;

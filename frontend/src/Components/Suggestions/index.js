@@ -52,7 +52,7 @@ const days = [
   },
   {
     value: "next_month",
-    label: "This Month"
+    label: "Next Month"
   }
 ];
 
