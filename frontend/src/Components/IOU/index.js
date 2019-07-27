@@ -6,7 +6,7 @@ import TheirDebt from './theirDebtList';
 import Paper from '@material-ui/core/Paper';
 
 function isMobileDevice() {
-  if(window.innerWidth <= 800 && window.innerHeight <= 600) {
+  if(window.innerWidth <= 420) {
     return true;
   } else {
     return false;
@@ -26,7 +26,7 @@ const Payment = ({ authUser, firebase, theirDebt, yourDebt, loading }) => {
       </div>
 
       { !isMobileDevice() ? 
-        <div className="debt leftBorder">
+        <div className="debtHorizon">
           <TheirDebt 
             authUser={authUser}
             firebase={firebase}
@@ -35,7 +35,7 @@ const Payment = ({ authUser, firebase, theirDebt, yourDebt, loading }) => {
           />
         </div>
         : 
-        <div className="debt topBorder">
+        <div className="debtVertical">
           <TheirDebt 
             authUser={authUser}
             firebase={firebase}

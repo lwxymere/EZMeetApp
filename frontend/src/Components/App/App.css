@@ -411,14 +411,17 @@ blueblue tabs */
   align-items: stretch;
   height: 100%;
 }
-.debt {
+.debtHorizon {
   flex-grow: 1;
   flex: 1 1 49%;
-}
-.leftBorder {
   border-left: solid 3px rgb(150, 95, 95);
 }
-.topBorder {
+.debt {
+  flex: 1 1 49%;
+  flex-grow: 1;
+}
+.debtVertical {
+  flex-grow: 1;
   border-top: solid 3px rgb(150, 95, 95);
 }
 .paymentPaper{
