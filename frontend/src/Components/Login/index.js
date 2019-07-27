@@ -70,8 +70,6 @@ class SignInGoogleBase extends Component {
         var updates = {};
         updates[`users/${authUser.user.uid}/username`] = authUser.user.displayName;
         updates[`users/${authUser.user.uid}/email`] = authUser.user.email;
-        console.log(updates);
-        console.log(this.props.firebase);
 
         this.props.firebase.db.ref().update(updates)
           .then((result) => {

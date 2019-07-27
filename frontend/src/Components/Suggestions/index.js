@@ -145,7 +145,7 @@ class EventSuggestions extends Component {
     if (filters.place !== '') url += ('&location.address=' + filters.place);
     if (filters.dateKeyword !== '') url += ('&start_date.keyword=' + filters.dateKeyword);
     url += ('&page=' + pageNumber);
-    console.log(url);
+    
     this.sdk.request(url)
       .then(res => {
         this.setState({
@@ -259,7 +259,6 @@ class EventSuggestions extends Component {
             <div className='filterDivButton'>
               <Button className='filterButton'
                 onClick={() => {
-                console.log(this.state.filters)
                 this.getEventbriteEvents(currentPage, this.state.filters)}}  >
                 Set filters
               </Button>

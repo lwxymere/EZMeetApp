@@ -88,8 +88,8 @@ const Contacts = ({ firebase, contacts, loading, authUser, eventData }) => {
     return (
       <div className="contentListed">
         {contacts.map(contact => (
-          <div className='contactBorder'>
-            <div key={contact.uid} className='contactDetails'>
+          <div key={contact.uid} className='contactBorder'>
+            <div className='contactDetails'>
               <div className='contactDetail'> 
                 <div className='contactInfo'>
                   <span className='contactU'> Name: </span>

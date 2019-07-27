@@ -14,6 +14,7 @@ class EventsCalendar extends Component {
     this.state = {
       loading: false,
       events: [],
+      eventIDs: [],
       currentEvent: [],
     };
   }
