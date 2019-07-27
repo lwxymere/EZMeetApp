@@ -62,6 +62,13 @@ class EventsCalendar extends Component {
 
   render() {
     const { events, loading } = this.state;
+
+    events.forEach((event, index, eventsRef) => { 
+      // eventsRef is like a pointer to the original events array
+      // change date format to one thats accepted by react-big-calendar
+      eventsRef[index].startTime = new Date(event.startTime);
+      eventsRef[index].endTime = new Date(event.endTime);
+    });
     
     if (loading) { // loading from database
       return (
@@ -83,7 +90,7 @@ class EventsCalendar extends Component {
           views={['month', 'day', 'agenda']}
           localizer={localizer}
           events={events}
-          onSelectEvent={event => alert(`Details: ${event.details} Location: ${event.location}`)}
+          onSelectEvent={event => alert(`Details: ${event.details}\nLocation: ${event.location}`)}
           //onShowMore={(events, date) => this.setState({showModal: true, events})}
           //onSelectEvent={event => console.log(event)}
           />

@@ -404,9 +404,6 @@ class HomeNavBar extends React.Component {
       .on('value', snapshot => {
         if (!snapshot.val()) { // no IOUs
           this.setState({ // reset to default state
-            theirDebt: {},
-            yourDebt: {},
-            IOUCount: 0,
             loading: false,
           });
           return;

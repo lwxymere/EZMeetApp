@@ -316,8 +316,13 @@ class EditEventButton extends Component {
 
     var updates = {};
     updates[`/events/${eventID}/eventName`] = this.state.eventName;
-    updates[`/events/${eventID}/startTime`] = this.state.startTime.toLocaleString();
-    updates[`/events/${eventID}/endTime`] = this.state.endTime.toLocaleString();
+    //updates[`/events/${eventID}/startTime`] = this.state.startTime.toLocaleString();
+    //updates[`/events/${eventID}/endTime`] = this.state.endTime.toLocaleString();
+
+    updates[`/events/${eventID}/startTime`] = Moment(new Date(this.state.startTime)).format("llll");
+    updates[`/events/${eventID}/endTime`] = Moment(new Date(this.state.endTime)).format("llll");
+      
+      
     updates[`/events/${eventID}/location`] = this.state.location;
     updates[`/events/${eventID}/details`] = this.state.details;
 
