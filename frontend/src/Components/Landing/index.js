@@ -134,7 +134,7 @@ const HowTo = () => {
       <div className="howtoVideo">
         <ReactPlayer
           className="react-player"
-          url="https://www.youtube.com/watch?v=v-uwDs_XNgc&t=1s"
+          url="https://youtu.be/HYJlleaKkVI"
           controls="true"
         />
       </div>
