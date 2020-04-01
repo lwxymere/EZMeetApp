@@ -1,3 +1,6 @@
+## Website ##
+EZMeet is hosted online [here](https://ezmeet-1ea42.firebaseapp.com/)
+
 ## Nodes to install ## 
 
 Please update when you install new things.
